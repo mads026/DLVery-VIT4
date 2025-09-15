@@ -1,0 +1,262 @@
+<div class="login-container">
+  <div class="login-card">
+    <mat-card class="login-mat-card">
+      <mat-card-header>
+        <mat-card-title class="login-title">
+          <mat-icon class="login-icon">local_shipping</mat-icon>
+          DIVery Login
+        </mat-card-title>
+        <mat-card-subtitle>Choose your login method</mat-card-subtitle>
+      </mat-card-header>
+
+      <mat-card-content>
+        <mat-tab-group class="login-tabs">
+          <!-- Inventory Team Login -->
+          <mat-tab label="Inventory Team">
+            <div class="tab-content">
+              <!-- Login Form -->
+              <div *ngIf="!showRegisterForm">
+                <form (ngSubmit)="onInventoryLogin()" #inventoryForm="ngForm">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Username</mat-label>
+                    <input 
+                      matInput 
+                      [(ngModel)]="inventoryCredentials.username" 
+                      name="username"
+                      required
+                      minlength="3"
+                      maxlength="50"
+                      autocomplete="username"
+                      #usernameInput="ngModel">
+                    <mat-icon matSuffix>person</mat-icon>
+                    <mat-error *ngIf="usernameInput.invalid && usernameInput.touched">
+                      <span *ngIf="usernameInput.errors?.['required']">Username is required</span>
+                      <span *ngIf="usernameInput.errors?.['minlength']">Username must be at least 3 characters</span>
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Password</mat-label>
+                    <input 
+                      matInput 
+                      [type]="hidePassword ? 'password' : 'text'"
+                      [(ngModel)]="inventoryCredentials.password" 
+                      name="password"
+                      required
+                      minlength="6"
+                      autocomplete="current-password"
+                      #passwordInput="ngModel">
+                    <button 
+                      mat-icon-button 
+                      matSuffix 
+                      type="button"
+                      (click)="togglePasswordVisibility()"
+                      [attr.aria-label]="'Hide password'"
+                      [attr.aria-pressed]="!hidePassword">
+                      <mat-icon>{{hidePassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                    </button>
+                    <mat-error *ngIf="passwordInput.invalid && passwordInput.touched">
+                      <span *ngIf="passwordInput.errors?.['required']">Password is required</span>
+                      <span *ngIf="passwordInput.errors?.['minlength']">Password must be at least 6 characters</span>
+                    </mat-error>
+                  </mat-form-field>
+
+                  <div class="error-message" *ngIf="errorMessage">
+                    <mat-icon>error</mat-icon>
+                    {{ errorMessage }}
+                  </div>
+
+                  <button 
+                    mat-raised-button 
+                    color="primary" 
+                    type="submit"
+                    class="login-button"
+                    [disabled]="loading || !inventoryForm.valid || !inventoryCredentials.username.trim() || !inventoryCredentials.password.trim()">
+                    <mat-spinner *ngIf="loading" diameter="20" class="button-spinner"></mat-spinner>
+                    <mat-icon *ngIf="!loading">login</mat-icon>
+                    <span class="button-text">{{ loading ? 'Signing In...' : 'Sign In' }}</span>
+                  </button>
+                </form>
+
+                <div class="form-toggle">
+                  <p>Don't have an account? 
+                    <button mat-button color="primary" (click)="toggleForm()" type="button">
+                      Register here
+                    </button>
+                  </p>
+                </div>
+
+              </div>
+
+              <!-- Registration Form -->
+              <div *ngIf="showRegisterForm">
+                <form (ngSubmit)="onInventoryRegister()" #registerForm="ngForm">
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Full Name</mat-label>
+                    <input 
+                      matInput 
+                      [(ngModel)]="registerData.fullName" 
+                      name="fullName"
+                      required
+                      maxlength="100"
+                      #fullNameInput="ngModel">
+                    <mat-icon matSuffix>badge</mat-icon>
+                    <mat-error *ngIf="fullNameInput.invalid && fullNameInput.touched">
+                      <span *ngIf="fullNameInput.errors?.['required']">Full name is required</span>
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Username</mat-label>
+                    <input 
+                      matInput 
+                      [(ngModel)]="registerData.username" 
+                      name="regUsername"
+                      required
+                      minlength="3"
+                      maxlength="50"
+                      autocomplete="username"
+                      #regUsernameInput="ngModel">
+                    <mat-icon matSuffix>person</mat-icon>
+                    <mat-error *ngIf="regUsernameInput.invalid && regUsernameInput.touched">
+                      <span *ngIf="regUsernameInput.errors?.['required']">Username is required</span>
+                      <span *ngIf="regUsernameInput.errors?.['minlength']">Username must be at least 3 characters</span>
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Email</mat-label>
+                    <input 
+                      matInput 
+                      type="email"
+                      [(ngModel)]="registerData.email" 
+                      name="email"
+                      required
+                      email
+                      autocomplete="email"
+                      #emailInput="ngModel">
+                    <mat-icon matSuffix>email</mat-icon>
+                    <mat-error *ngIf="emailInput.invalid && emailInput.touched">
+                      <span *ngIf="emailInput.errors?.['required']">Email is required</span>
+                      <span *ngIf="emailInput.errors?.['email']">Please enter a valid email</span>
+                    </mat-error>
+                  </mat-form-field>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Password</mat-label>
+                    <input 
+                      matInput 
+                      [type]="hidePassword ? 'password' : 'text'"
+                      [(ngModel)]="registerData.password" 
+                      name="regPassword"
+                      required
+                      minlength="8"
+                      autocomplete="new-password"
+                      #regPasswordInput="ngModel"
+                      (input)="onPasswordChange()">
+                    <button 
+                      mat-icon-button 
+                      matSuffix 
+                      type="button"
+                      (click)="togglePasswordVisibility()"
+                      [attr.aria-label]="'Hide password'"
+                      [attr.aria-pressed]="!hidePassword">
+                      <mat-icon>{{hidePassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                    </button>
+                    <mat-error *ngIf="regPasswordInput.invalid && regPasswordInput.touched">
+                      <span *ngIf="regPasswordInput.errors?.['required']">Password is required</span>
+                      <span *ngIf="regPasswordInput.errors?.['minlength']">Password must be at least 8 characters</span>
+                    </mat-error>
+                  </mat-form-field>
+
+                  <!-- Password Strength Indicator -->
+                  <app-password-strength 
+                    [password]="registerData.password"
+                    [showRequirements]="true">
+                  </app-password-strength>
+
+                  <mat-form-field appearance="outline" class="full-width">
+                    <mat-label>Confirm Password</mat-label>
+                    <input 
+                      matInput 
+                      [type]="hideConfirmPassword ? 'password' : 'text'"
+                      [(ngModel)]="registerData.confirmPassword" 
+                      name="confirmPassword"
+                      required
+                      autocomplete="new-password"
+                      #confirmPasswordInput="ngModel">
+                    <button 
+                      mat-icon-button 
+                      matSuffix 
+                      type="button"
+                      (click)="toggleConfirmPasswordVisibility()"
+                      [attr.aria-label]="'Hide confirm password'"
+                      [attr.aria-pressed]="!hideConfirmPassword">
+                      <mat-icon>{{hideConfirmPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                    </button>
+                    <mat-error *ngIf="confirmPasswordInput.invalid && confirmPasswordInput.touched">
+                      <span *ngIf="confirmPasswordInput.errors?.['required']">Please confirm your password</span>
+                    </mat-error>
+                    <mat-error *ngIf="registerData.password !== registerData.confirmPassword && registerData.confirmPassword">
+                      Passwords do not match
+                    </mat-error>
+                  </mat-form-field>
+
+                  <div class="error-message" *ngIf="errorMessage">
+                    <mat-icon>error</mat-icon>
+                    {{ errorMessage }}
+                  </div>
+
+                  <button 
+                    mat-raised-button 
+                    color="primary" 
+                    type="submit"
+                    class="login-button"
+                    [disabled]="loading || !registerForm.valid || registerData.password !== registerData.confirmPassword">
+                    <mat-spinner *ngIf="loading" diameter="20" class="button-spinner"></mat-spinner>
+                    <mat-icon *ngIf="!loading">person_add</mat-icon>
+                    <span class="button-text">{{ loading ? 'Creating Account...' : 'Create Account' }}</span>
+                  </button>
+                </form>
+
+                <div class="form-toggle">
+                  <p>Already have an account? 
+                    <button mat-button color="primary" (click)="toggleForm()" type="button">
+                      Sign in here
+                    </button>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </mat-tab>
+
+          <!-- Delivery Team Login -->
+          <mat-tab label="Delivery Team">
+            <div class="tab-content">
+              <div class="oauth-section">
+                <p class="oauth-description">
+                  Delivery team members use Google OAuth for secure authentication
+                </p>
+                
+                <button 
+                  mat-raised-button 
+                  color="accent" 
+                  (click)="onDeliveryLogin()"
+                  class="oauth-button"
+                  [disabled]="loading">
+                  <mat-icon>account_circle</mat-icon>
+                  Sign in with Google
+                </button>
+                
+                <p class="oauth-note">
+                  <mat-icon class="info-icon">info</mat-icon>
+                  You'll be redirected to Google for secure authentication
+                </p>
+              </div>
+            </div>
+          </mat-tab>
+        </mat-tab-group>
+      </mat-card-content>
+    </mat-card>
+  </div>
+</div>
