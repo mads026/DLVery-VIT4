@@ -2,7 +2,6 @@
 
 [![Spring Boot](https://img.shields.io/badge/Spring%20Boot-3.5.5-brightgreen)](https://spring.io/projects/spring-boot)
 [![Angular](https://img.shields.io/badge/Angular-20.3.0-red)](https://angular.io/)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
 
 ## 🚀 Quick Start
 
