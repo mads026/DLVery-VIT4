@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -23,6 +24,7 @@ import java.util.Arrays;
 
 @Configuration
 @RequiredArgsConstructor
+@EnableMethodSecurity // Enable method-level security
 public class SecurityConfig {
 
     private final UserService userService;
@@ -36,7 +38,8 @@ public class SecurityConfig {
 
     @Bean
     public DaoAuthenticationProvider authenticationProvider() {
-        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider(userService);
+        DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
+        authProvider.setUserDetailsService(userService);
         authProvider.setPasswordEncoder(passwordEncoder());
         return authProvider;
     }
@@ -59,23 +62,34 @@ public class SecurityConfig {
         return source;
     }
 
+    // @Bean
+    // public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    //     http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
+    //             .csrf(csrf -> csrf.disable())
+    //             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+    //             .authorizeHttpRequests(authz -> authz
+    //                     .requestMatchers("/api/auth/**", "/oauth2/**", "/login/oauth2/**", "/api/test",
+    //                             "/api/oauth-debug")
+    //                     .permitAll()
+    //                     .requestMatchers("/api/inventory/**").hasRole("INV_TEAM")
+    //                     .requestMatchers("/api/delivery/**").hasRole("DL_TEAM")
+    //                     .anyRequest().authenticated())
+    //             .oauth2Login(oauth2 -> oauth2
+    //                     .successHandler(oAuth2AuthenticationSuccessHandler)
+    //                     .failureUrl("http://localhost:4200/login?error=oauth_failed"))
+    //             .authenticationProvider(authenticationProvider())
+    //             .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
+    //     return http.build();
+    // }
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(csrf -> csrf.disable())
-            .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(authz -> authz
-                .requestMatchers("/api/auth/**", "/oauth2/**", "/login/oauth2/**", "/api/test", "/api/oauth-debug").permitAll()
-                .requestMatchers("/api/inventory/**").hasRole("INV_TEAM")
-                .requestMatchers("/api/delivery/**").hasRole("DL_TEAM")
-                .anyRequest().authenticated()
-            )
-            .oauth2Login(oauth2 -> oauth2
-                .successHandler(oAuth2AuthenticationSuccessHandler)
-                .failureUrl("http://localhost:4200/login?error=oauth_failed")
-            )
-            .authenticationProvider(authenticationProvider())
-            .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .csrf(csrf -> csrf.disable())
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authorizeHttpRequests(authz -> authz
+                        .anyRequest().permitAll());
 
         return http.build();
     }
