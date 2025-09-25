@@ -1,0 +1,4 @@
+sku,name,description,category,quantity,unitPrice,isDamaged,isPerishable,expiryDate
+ELEC001,Smartphone,Latest model smartphone,ELECTRONICS,50,599.99,false,false,
+FOOD001,Organic Apples,Fresh organic apples,FRESH_PRODUCE,100,2.99,false,true,2024-12-31
+CLOTH001,Cotton T-Shirt,100% cotton t-shirt,CLOTHING,200,19.99,false,false,

@@ -1,0 +1,9 @@
+/* Product form specific styles */
+mat-dialog-content {
+  max-height: 70vh;
+  overflow-y: auto;
+}
+
+.mat-form-field {
+  width: 100%;
+}

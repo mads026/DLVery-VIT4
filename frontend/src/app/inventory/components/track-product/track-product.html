@@ -1,0 +1,89 @@
+<div class="track-product-container">
+  <div class="page-header">
+    <h1 class="page-title">Track Product Deliveries</h1>
+  </div>
+
+  <mat-card class="search-card">
+    <mat-card-content>
+      <form [formGroup]="trackForm" (ngSubmit)="onTrack()" class="search-form">
+        <div class="form-row">
+          <mat-form-field appearance="outline">
+            <mat-label>Product SKU</mat-label>
+            <input matInput formControlName="sku" placeholder="Enter product SKU" [matAutocomplete]="skuAuto">
+            <mat-autocomplete #skuAuto="matAutocomplete">
+              <mat-option *ngFor="let sku of filteredSkus | async" [value]="sku">
+                {{ sku }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <mat-form-field appearance="outline">
+            <mat-label>Delivery Agent</mat-label>
+            <input matInput formControlName="agent" placeholder="Enter delivery agent name" [matAutocomplete]="agentAuto">
+            <mat-autocomplete #agentAuto="matAutocomplete">
+              <mat-option *ngFor="let agent of filteredAgents | async" [value]="agent">
+                {{ agent }}
+              </mat-option>
+            </mat-autocomplete>
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" type="submit" [disabled]="loading">
+            <mat-icon>search</mat-icon>
+            Track
+          </button>
+        </div>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <div *ngIf="loading" class="loading-state">
+    <div class="loading-text">Searching deliveries...</div>
+  </div>
+
+  <div *ngIf="!loading && deliveries.length === 0 && (trackForm.get('sku')?.value || trackForm.get('agent')?.value)" class="no-results">
+    No deliveries found matching your criteria.
+  </div>
+
+  <mat-card *ngIf="!loading && deliveries.length > 0" class="results-card">
+    <mat-card-header>
+      <mat-card-title>Delivery Results ({{ deliveries.length }})</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <table mat-table [dataSource]="deliveries" class="deliveries-table">
+        <ng-container matColumnDef="deliveryId">
+          <th mat-header-cell *matHeaderCellDef>Delivery ID</th>
+          <td mat-cell *matCellDef="let delivery">{{ delivery.deliveryId }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="agent">
+          <th mat-header-cell *matHeaderCellDef>Agent</th>
+          <td mat-cell *matCellDef="let delivery">{{ delivery.deliveryAgent }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let delivery">
+            <mat-chip [class]="getStatusClass(delivery.status)">
+              {{ delivery.status.replace('_', ' ') }}
+            </mat-chip>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="createdAt">
+          <th mat-header-cell *matHeaderCellDef>Created</th>
+          <td mat-cell *matCellDef="let delivery">{{ delivery.createdAt | date:'short' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="items">
+          <th mat-header-cell *matHeaderCellDef>Items</th>
+          <td mat-cell *matCellDef="let delivery" class="items-cell">
+            {{ getItemSummary(delivery.items) }}
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+      </table>
+    </mat-card-content>
+  </mat-card>
+</div>

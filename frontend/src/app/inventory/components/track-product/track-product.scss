@@ -1,0 +1,93 @@
+.track-product-container {
+  padding: 20px;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.page-header {
+  margin-bottom: 24px;
+
+  .page-title {
+    font-size: 28px;
+    font-weight: 500;
+    color: #333;
+    margin: 0;
+  }
+}
+
+.search-card {
+  margin-bottom: 24px;
+
+  .search-form {
+    .form-row {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+
+      mat-form-field {
+        flex: 1;
+        min-width: 200px;
+      }
+
+      button {
+        height: 40px;
+        padding: 0 24px;
+      }
+    }
+  }
+}
+
+.loading-state, .no-results {
+  text-align: center;
+  padding: 40px;
+  color: #666;
+  font-size: 16px;
+}
+
+.results-card {
+  .deliveries-table {
+    width: 100%;
+
+    .items-cell {
+      max-width: 300px;
+      word-wrap: break-word;
+    }
+  }
+}
+
+// Status chip styles
+.status-delivered {
+  background-color: #4caf50 !important;
+  color: white !important;
+}
+
+.status-in-transit {
+  background-color: #2196f3 !important;
+  color: white !important;
+}
+
+.status-pending {
+  background-color: #ff9800 !important;
+  color: white !important;
+}
+
+.status-cancelled {
+  background-color: #f44336 !important;
+  color: white !important;
+}
+
+.status-returned {
+  background-color: #9c27b0 !important;
+  color: white !important;
+}
+
+.status-damaged {
+  background-color: #ff5722 !important;
+  color: white !important;
+}
+
+.status-default {
+  background-color: #9e9e9e !important;
+  color: white !important;
+}
