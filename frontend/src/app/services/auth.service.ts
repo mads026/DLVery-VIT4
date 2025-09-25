@@ -2,6 +2,8 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { BehaviorSubject, Observable } from 'rxjs';
 import { Router } from '@angular/router';
+import { tap } from 'rxjs/operators';
+import { environment } from '../../environments/environment';
 
 export interface LoginRequest {
   username: string;
@@ -34,18 +36,23 @@ export interface User {
   providedIn: 'root'
 })
 export class AuthService {
-  private readonly API_URL = 'http://localhost:8080/api/auth';
+  private readonly API_URL = environment.authApiUrl;
   private currentUserSubject = new BehaviorSubject<User | null>(null);
   public currentUser$ = this.currentUserSubject.asObservable();
+  private initialized = false;
 
-  constructor(private http: HttpClient, private router: Router) {
+  constructor(
+    private http: HttpClient,
+    private router: Router
+  ) {
+    // Load user from storage synchronously to prevent auth state flicker
     this.loadUserFromStorage();
   }
 
   private loadUserFromStorage(): void {
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    
+    const token = sessionStorage.getItem('token');
+    const userData = sessionStorage.getItem('user');
+
     if (token && userData) {
       try {
         const user = JSON.parse(userData);
@@ -54,10 +61,18 @@ export class AuthService {
         this.logout();
       }
     }
+    this.initialized = true;
   }
 
   loginInventoryTeam(credentials: LoginRequest): Observable<AuthResponse> {
-    return this.http.post<AuthResponse>(`${this.API_URL}/inventory/login`, credentials);
+    return this.http.post<AuthResponse>(`${this.API_URL}/inventory/login`, credentials).pipe(
+      tap(response => {
+        if (response.token) {
+          sessionStorage.setItem('token', response.token);
+          this.setAuthData(response);
+        }
+      })
+    );
   }
 
   registerInventoryTeam(registerData: RegisterRequest): Observable<AuthResponse> {
@@ -65,61 +80,82 @@ export class AuthService {
   }
 
   loginDeliveryTeam(): void {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    window.location.href = environment.oauthUrl;
   }
 
-  handleAuthCallback(token: string, role: string): void {
+  handleAuthCallback(token: string, role: string, username?: string, email?: string): void {
     if (token) {
-      localStorage.setItem('token', token);
-      
-      // Decode basic user info from token (in real app, you'd validate this server-side)
-      const user: User = {
-        username: 'user', // You'd extract this from JWT
-        email: 'user@example.com', // You'd extract this from JWT
-        role: role as 'INV_TEAM' | 'DL_TEAM'
+      // Create AuthResponse object
+      const authResponse: AuthResponse = {
+        token,
+        username: username || 'Delivery User',
+        email: email || 'delivery@dlvery.com',
+        role: role as 'INV_TEAM' | 'DL_TEAM',
+        message: 'OAuth login successful'
       };
-      
-      localStorage.setItem('user', JSON.stringify(user));
-      this.currentUserSubject.next(user);
-      
-      // Redirect based on role
-      if (role === 'INV_TEAM') {
-        this.router.navigate(['/inventory/dashboard']);
-      } else if (role === 'DL_TEAM') {
-        this.router.navigate(['/delivery/dashboard']);
-      }
+
+      sessionStorage.setItem('token', token);
+      this.setAuthData(authResponse);
+
+      // Redirect based on role with a small delay to prevent glitches
+      setTimeout(() => {
+        this.navigateBasedOnRole(role);
+      }, 100);
+    } else {
+      // Handle error case
+      this.router.navigate(['/login'], {
+        queryParams: { error: 'auth_failed' }
+      });
     }
   }
 
   setAuthData(response: AuthResponse): void {
-    localStorage.setItem('token', response.token);
-    
     const user: User = {
       username: response.username,
       email: response.email,
       role: response.role
     };
-    
-    localStorage.setItem('user', JSON.stringify(user));
+
+    sessionStorage.setItem('user', JSON.stringify(user));
     this.currentUserSubject.next(user);
   }
 
+  private navigateBasedOnRole(role: string): void {
+    if (role === 'INV_TEAM') {
+      this.router.navigate(['/inventory']);
+    } else if (role === 'DL_TEAM') {
+      this.router.navigate(['/delivery/dashboard']);
+    }
+  }
+
   logout(): void {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
+    this.clearAuthData();
+  }
+
+  private clearAuthData(): void {
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('user');
     this.currentUserSubject.next(null);
     this.router.navigate(['/login']);
   }
 
   isAuthenticated(): boolean {
-    return !!localStorage.getItem('token');
+    return !!sessionStorage.getItem('token');
   }
 
   getToken(): string | null {
-    return localStorage.getItem('token');
+    return sessionStorage.getItem('token');
   }
 
   getCurrentUser(): User | null {
     return this.currentUserSubject.value;
+  }
+
+  isInitialized(): boolean {
+    return this.initialized;
+  }
+
+  resendVerificationEmail(email: string): Observable<any> {
+    return this.http.post(`${this.API_URL}/resend-verification`, { email });
   }
 }

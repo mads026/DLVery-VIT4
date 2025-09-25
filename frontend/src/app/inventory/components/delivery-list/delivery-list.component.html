@@ -1,0 +1,206 @@
+<div class="delivery-container">
+  <!-- Header Section -->
+  <div class="delivery-header">
+    <div class="header-content">
+      <div class="header-text">
+        <h1 class="delivery-title">Delivery Management</h1>
+        <p class="delivery-subtitle">Manage and track product deliveries</p>
+      </div>
+      <div class="header-actions">
+        <button mat-raised-button color="primary" (click)="openDeliveryForm()" class="schedule-btn">
+          <mat-icon>add</mat-icon>
+          Schedule Delivery
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="loading-container">
+    <div class="loading-spinner">
+      <mat-icon class="spin">refresh</mat-icon>
+    </div>
+    <p class="loading-text">Loading delivery data...</p>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading" class="delivery-content">
+    
+    <!-- Key Performance Indicators -->
+    <section class="kpi-section">
+      <div class="kpi-grid">
+        
+        <!-- Total Deliveries Card -->
+        <div class="kpi-card total-deliveries">
+          <div class="kpi-header">
+            <div class="kpi-title">
+              <mat-icon>local_shipping</mat-icon>
+              <span>Total Deliveries</span>
+            </div>
+          </div>
+          <div class="kpi-main">
+            <div class="kpi-value">{{ getTotalDeliveries() }}</div>
+          </div>
+        </div>
+
+        <!-- Pending Card -->
+        <div class="kpi-card pending">
+          <div class="kpi-header">
+            <div class="kpi-title">
+              <mat-icon>schedule</mat-icon>
+              <span>Pending</span>
+            </div>
+          </div>
+          <div class="kpi-main">
+            <div class="kpi-value pending-color">{{ getPendingDeliveries() }}</div>
+          </div>
+        </div>
+
+        <!-- In Transit Card -->
+        <div class="kpi-card in-transit">
+          <div class="kpi-header">
+            <div class="kpi-title">
+              <mat-icon>local_shipping</mat-icon>
+              <span>In Transit</span>
+            </div>
+          </div>
+          <div class="kpi-main">
+            <div class="kpi-value transit-color">{{ getInTransitDeliveries() }}</div>
+          </div>
+        </div>
+
+        <!-- Delivered Card -->
+        <div class="kpi-card delivered">
+          <div class="kpi-header">
+            <div class="kpi-title">
+              <mat-icon>check_circle</mat-icon>
+              <span>Delivered</span>
+            </div>
+          </div>
+          <div class="kpi-main">
+            <div class="kpi-value delivered-color">{{ getDeliveredCount() }}</div>
+          </div>
+        </div>
+
+        <!-- Damaged Card -->
+        <div class="kpi-card damaged">
+          <div class="kpi-header">
+            <div class="kpi-title">
+              <mat-icon>warning</mat-icon>
+              <span>Damaged</span>
+            </div>
+          </div>
+          <div class="kpi-main">
+            <div class="kpi-value damaged-color">{{ getDamagedDeliveries() }}</div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Filters Section -->
+    <section class="filter-section">
+      <h2 class="filter-title">Filter Deliveries</h2>
+      <p class="filter-subtitle">Filter deliveries by status and agent</p>
+      
+      <div class="filter-grid">
+        <div class="filter-group">
+          <label class="filter-label">Status</label>
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-select [(value)]="selectedStatus" (selectionChange)="onStatusChange()" placeholder="All Status">
+              <mat-option value="">All Status</mat-option>
+              <mat-option *ngFor="let status of statuses" [value]="status">
+                {{ formatStatus(status) }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>expand_more</mat-icon>
+          </mat-form-field>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Delivery Agent</label>
+          <mat-form-field appearance="outline" class="filter-field">
+            <mat-select [(value)]="selectedAgent" (selectionChange)="onAgentChange()" placeholder="All Agents">
+              <mat-option value="">All Agents</mat-option>
+              <mat-option *ngFor="let agent of agents" [value]="agent">
+                {{ agent }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>expand_more</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+    </section>
+
+    <!-- Search and Delivery List -->
+    <section class="delivery-list-section">
+      <div class="list-header">
+        <div class="list-title-group">
+          <h2 class="list-title">Delivery List</h2>
+          <p class="list-subtitle">Showing {{ getFilteredCount() }} of {{ getTotalDeliveries() }} deliveries</p>
+        </div>
+        
+        <div class="search-group">
+          <mat-form-field appearance="outline" class="search-field">
+            <input matInput 
+                   [(ngModel)]="searchTerm" 
+                   (ngModelChange)="onSearchChange()" 
+                   placeholder="Search deliveries...">
+            <mat-icon matSuffix>search</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+
+      <div class="table-container">
+        <div *ngIf="filteredDeliveries.length === 0" class="no-results">
+          <mat-icon>search_off</mat-icon>
+          <h4>No deliveries found</h4>
+          <p>Try adjusting your search terms or filters</p>
+          <button mat-button (click)="clearFilters()">Clear all filters</button>
+        </div>
+        
+        <table *ngIf="filteredDeliveries.length > 0" class="delivery-table">
+          <thead>
+            <tr>
+              <th>Delivery ID</th>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Agent</th>
+              <th>Quantity</th>
+              <th>Status</th>
+              <th>Scheduled</th>
+              <th>Delivered</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let delivery of filteredDeliveries; let i = index" class="table-row">
+              <td class="delivery-id-cell">{{ delivery.id || (i + 1) }}</td>
+              <td class="product-name">{{ getFirstProductName(delivery) }}</td>
+              <td class="sku-cell">{{ getFirstProductSku(delivery) }}</td>
+              <td class="agent-cell">{{ delivery.deliveryAgent }}</td>
+              <td class="quantity-cell">{{ getTotalItems(delivery) }}</td>
+              <td class="status-cell">
+                <span class="status-badge" [ngClass]="getStatusClass(delivery.status)">
+                  <mat-icon class="status-icon">{{ getStatusIcon(delivery.status) }}</mat-icon>
+                  {{ formatStatus(delivery.status) }}
+                </span>
+              </td>
+              <td class="date-cell">{{ delivery.createdAt | date:'M/d/yyyy' }}</td>
+              <td class="date-cell">{{ getDeliveredDate(delivery) }}</td>
+              <td class="actions-cell">
+                <button mat-button 
+                        class="update-btn" 
+                        (click)="openUpdateDialog(delivery)"
+                        [disabled]="!canUpdateStatus(delivery.status)">
+                  {{ getUpdateButtonText(delivery.status) }}
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+  </div>
+</div>

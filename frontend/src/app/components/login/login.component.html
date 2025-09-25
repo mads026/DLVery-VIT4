@@ -244,8 +244,9 @@
                   (click)="onDeliveryLogin()"
                   class="oauth-button"
                   [disabled]="loading">
-                  <mat-icon>account_circle</mat-icon>
-                  Sign in with Google
+                  <mat-spinner *ngIf="loading" diameter="20" class="button-spinner"></mat-spinner>
+                  <mat-icon *ngIf="!loading">account_circle</mat-icon>
+                  <span class="button-text">{{ loading ? 'Redirecting...' : 'Sign in with Google' }}</span>
                 </button>
                 
                 <p class="oauth-note">

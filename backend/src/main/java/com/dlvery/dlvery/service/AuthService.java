@@ -6,6 +6,7 @@ import com.dlvery.dlvery.dto.RegisterRequest;
 import com.dlvery.dlvery.entity.AuthProvider;
 import com.dlvery.dlvery.entity.User;
 import com.dlvery.dlvery.entity.UserRole;
+import com.dlvery.dlvery.exception.CustomExceptions;
 import com.dlvery.dlvery.repository.UserRepository;
 import com.dlvery.dlvery.util.JwtUtil;
 import com.dlvery.dlvery.util.PasswordValidator;
@@ -42,12 +43,12 @@ public class AuthService {
             
             // Verify user is inventory team
             if (user.getRole() != UserRole.INV_TEAM) {
-                throw new RuntimeException("Access denied: Invalid role for inventory login");
+                throw new CustomExceptions.InvalidRoleException("Access denied: Invalid role for inventory login");
             }
             
             // Check if email is verified
             if (!user.getEmailVerified()) {
-                throw new RuntimeException("Please verify your email before logging in. Check your inbox for verification link.");
+                throw new CustomExceptions.EmailNotVerifiedException("Please verify your email before logging in. Check your inbox for verification link.");
             }
             
             // Update last login time
@@ -59,57 +60,40 @@ public class AuthService {
             return new AuthResponse(
                 token,
                 user.getUsername(),
-                user.getUsername(), // Using username as email for response
+                user.getEmail(), // Use actual email instead of username
                 user.getRole(),
                 "Login successful"
             );
             
         } catch (AuthenticationException e) {
-            throw new RuntimeException("Invalid credentials");
+            throw new CustomExceptions.AuthenticationFailedException("Invalid credentials");
         }
     }
     
     public AuthResponse registerInventoryTeam(RegisterRequest registerRequest) {
-        // Validation
-        if (registerRequest.getUsername() == null || registerRequest.getUsername().trim().isEmpty()) {
-            throw new RuntimeException("Username is required");
-        }
-        
-        if (registerRequest.getPassword() == null || registerRequest.getPassword().isEmpty()) {
-            throw new RuntimeException("Password is required");
-        }
-        
         // Use the PasswordValidator for comprehensive password validation
         PasswordValidator.PasswordValidationResult passwordValidationResult = 
             passwordValidator.validatePassword(registerRequest.getPassword());
         
         if (!passwordValidationResult.isValid()) {
-            throw new RuntimeException(passwordValidationResult.getMessage());
+            throw new CustomExceptions.InvalidPasswordException(passwordValidationResult.getMessage());
         }
         
         PasswordValidator.PasswordValidationResult matchValidationResult = 
             passwordValidator.validatePasswordMatch(registerRequest.getPassword(), registerRequest.getConfirmPassword());
         
         if (!matchValidationResult.isValid()) {
-            throw new RuntimeException(matchValidationResult.getMessage());
-        }
-        
-        if (registerRequest.getEmail() == null || !isValidEmail(registerRequest.getEmail())) {
-            throw new RuntimeException("Valid email is required");
-        }
-        
-        if (registerRequest.getFullName() == null || registerRequest.getFullName().trim().isEmpty()) {
-            throw new RuntimeException("Full name is required");
+            throw new CustomExceptions.InvalidPasswordException(matchValidationResult.getMessage());
         }
         
         // Check if username already exists
         if (userRepository.existsByUsername(registerRequest.getUsername().trim())) {
-            throw new RuntimeException("Username already exists");
+            throw new CustomExceptions.UserAlreadyExistsException("Username already exists");
         }
         
         // Check if email already exists
         if (userRepository.existsByEmail(registerRequest.getEmail().trim().toLowerCase())) {
-            throw new RuntimeException("Email already exists");
+            throw new CustomExceptions.UserAlreadyExistsException("Email already exists");
         }
         
         // Create new user
@@ -136,8 +120,5 @@ public class AuthService {
             "Registration successful! Please check your email and verify your account before logging in."
         );
     }
-    
-    private boolean isValidEmail(String email) {
-        return email != null && email.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$");
-    }
+
 }

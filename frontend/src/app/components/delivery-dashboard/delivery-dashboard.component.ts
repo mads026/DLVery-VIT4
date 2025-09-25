@@ -17,7 +17,7 @@ import { AuthService, User } from '../../services/auth.service';
     MatCardModule
   ],
   template: `
-    <mat-toolbar color="accent">
+    <mat-toolbar color="primary">
       <span>DIVery - Delivery Management</span>
       <span class="spacer"></span>
       <span *ngIf="currentUser">Welcome, {{ currentUser.username }}</span>
@@ -78,7 +78,7 @@ import { AuthService, User } from '../../services/auth.service';
 export class DeliveryDashboardComponent implements OnInit {
   currentUser: User | null = null;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();

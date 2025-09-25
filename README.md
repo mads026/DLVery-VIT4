@@ -12,35 +12,7 @@
 - **Maven 3.6+**
 - **Google Cloud Console** account (for OAuth setup)
 
-### 1. Database Setup
-From the root directory, run these commands in your MySQL client:
-
-```sql
-CREATE DATABASE dlvery_db;
-
-CREATE TABLE users (
-    id BIGINT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password_hash VARCHAR(255) NULL, -- NULL for OAuth users
-    email VARCHAR(100) NULL UNIQUE, -- Email for registration
-    full_name VARCHAR(100) NULL, -- Full name for registration
-    oauth_provider ENUM('LOCAL', 'GOOGLE') NOT NULL,
-    oauth_provider_id VARCHAR(100) NULL, -- For OAuth provider user ID
-    role ENUM('INV_TEAM', 'DL_TEAM') NOT NULL,
-    is_active BOOLEAN NOT NULL DEFAULT TRUE,
-    last_login_at TIMESTAMP NULL,
-    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at TIMESTAMP NULL ON UPDATE CURRENT_TIMESTAMP,
-    
-    INDEX idx_username (username),
-    INDEX idx_email (email),
-    INDEX idx_role (role),
-    INDEX idx_oauth_provider (oauth_provider),
-    INDEX idx_oauth_provider_id (oauth_provider_id)
-);
-```
-
-### 2. Backend Setup
+### 1. Backend Setup
 ```bash
 cd backend
 ./mvnw spring-boot:run
@@ -89,10 +61,17 @@ Frontend runs on: `http://localhost:4200`
 - Email verification system
 - Password validation system
 
+### Inventory Management System
+- Product CRUD operations (create, read, update, delete)
+- Delivery creation and status tracking
+- Inventory movement logging
+- Comprehensive reporting and analytics
+- Dashboard for inventory overview
+- Product tracking functionality
+
 ## 🚧 What's Next
 
-### 1. Inventory Management System (In Progress)
-### 2. Delivery Agent Mobile Application
+### Delivery Team
 
 ## 🤝 Contributing
 

@@ -29,6 +29,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                   @NonNull HttpServletResponse response,
                                   @NonNull FilterChain filterChain) throws ServletException, IOException {
         
+        // Skip JWT processing for public endpoints
+        String requestPath = request.getRequestURI();
+        if (isPublicEndpoint(requestPath)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
+        
         final String authorizationHeader = request.getHeader("Authorization");
         
         String username = null;
@@ -44,17 +51,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
         
         if (username != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            UserDetails userDetails = userService.loadUserByUsername(username);
-            
-            if (jwtUtil.validateToken(jwt, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken = 
-                    new UsernamePasswordAuthenticationToken(
-                        userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+            try {
+                UserDetails userDetails = userService.loadUserByUsername(username);
+                
+                if (jwtUtil.validateToken(jwt, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken = 
+                        new UsernamePasswordAuthenticationToken(
+                            userDetails, null, userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
+            } catch (Exception e) {
+                logger.error("JWT authentication failed for user: " + username, e);
+                // Clear the security context on authentication failure
+                SecurityContextHolder.clearContext();
             }
         }
         
         filterChain.doFilter(request, response);
+    }
+    
+    private boolean isPublicEndpoint(String requestPath) {
+        return requestPath.startsWith("/api/auth/") ||
+               requestPath.startsWith("/api/email/") ||
+               requestPath.startsWith("/oauth2/") ||
+               requestPath.startsWith("/login/oauth2/") ||
+               requestPath.startsWith("/swagger-ui/") ||
+               requestPath.startsWith("/api-docs/") ||
+               requestPath.startsWith("/actuator/");
     }
 }
