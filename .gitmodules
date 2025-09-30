@@ -1,0 +1,3 @@
+[submodule "frontend-delivery-agent"]
+	path = frontend-delivery-agent
+	url = https://github.com/mads026/DLVery-VIT4.git
