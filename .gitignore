@@ -183,3 +183,21 @@ temp/
 # VIM
 [._]*.s[a-w][a-z]
 [._]s[a-w][a-z]
+# Node / Angular
+node_modules/
+dist/
+.angular/
+coverage/
+.tmp/
+*.log
+
+# IDE/OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+
+# Your workspace subfolder
+delivery-agent-app-working/node_modules/
+delivery-agent-app-working/dist/
+delivery-agent-app-working/.angular/

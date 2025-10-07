@@ -1,0 +1,35 @@
+<div class="card mb-4">
+  <div class="flex items-center gap-3">
+    <md-outlined-text-field
+    class="flex-1"
+    label="Search deliveries"
+    (input)="query.set(($any($event.target).value ?? '').toString())">
+  </md-outlined-text-field>
+
+    <md-filled-button (click)="refresh()">
+      <span class="material-symbols-outlined">refresh</span> Refresh
+    </md-filled-button>
+  </div>
+</div>
+<div class="space-y-3">
+  <div *ngFor="let d of filtered()" class="card">
+    <div class="flex items-center justify-between gap-3">
+      <div>
+        <div class="text-sm text-gray-500">#{{ d.id }}</div>
+        <div class="text-lg font-medium">{{ d.customerName }}</div>
+        <div class="text-sm text-gray-600">{{ d.address }}</div>
+        <div class="text-xs mt-1">
+          ETA: {{ d.expectedBy | date:'short' }}
+          <span *ngIf="d.pastPending" class="ml-2 px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-900">Past Pending</span>
+        </div>
+      </div>
+      <div class="text-right">
+        <div class="mb-2"><span class="px-2 py-1 rounded-full text-xs" [ngClass]="priorityChipColor(d.priority)">{{ d.priority }}</span></div>
+        <div class="text-xs font-semibold" [ngClass]="statusColor(d.status)">{{ d.status }}</div>
+      </div>
+    </div>
+    <div class="mt-4 flex justify-end">
+      <a [routerLink]="['/deliveries', d.id]"><md-filled-button><span class="material-symbols-outlined">arrow_forward</span> Open</md-filled-button></a>
+    </div>
+  </div>
+</div>

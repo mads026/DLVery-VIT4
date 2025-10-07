@@ -1,0 +1,48 @@
+<a routerLink="/deliveries" class="inline-block mb-3"><md-text-button><span class="material-symbols-outlined">arrow_back</span> Back</md-text-button></a>
+<div *ngIf="delivery; else notFound" class="space-y-4">
+  <div class="card">
+    <div class="flex items-center justify-between">
+      <div>
+        <div class="text-sm text-gray-500">#{{ delivery.id }}</div>
+        <div class="text-xl font-semibold">{{ delivery.customerName }}</div>
+        <div class="text-sm text-gray-600">{{ delivery.address }}</div>
+        <div class="text-xs mt-1">ETA: {{ delivery.expectedBy | date:'short' }}</div>
+      </div>
+      <div class="text-right">
+        <div class="text-xs text-gray-500">Priority</div>
+        <div class="text-sm font-semibold">{{ delivery.priority }}</div>
+        <div class="text-xs mt-2 text-gray-500">Status</div>
+        <div class="text-sm font-semibold">{{ delivery.status }}</div>
+      </div>
+    </div>
+  </div>
+  <div class="card">
+    <h3 class="text-lg font-medium mb-2">Items</h3>
+    <ul class="divide-y divide-gray-100">
+      <li *ngFor="let it of delivery.items" class="py-2 flex items-center justify-between">
+        <div><div class="font-medium">{{ it.name }}</div><div class="text-xs text-gray-500">SKU: {{ it.sku }}</div></div>
+        <div class="text-sm">Qty: {{ it.qty }}</div>
+      </li>
+    </ul>
+  </div>
+  <div class="card">
+    <h3 class="text-lg font-medium mb-3">Complete Delivery</h3>
+    <div class="grid gap-3">
+      <md-outlined-text-field label="Customer Name" [(value)]="customerName"></md-outlined-text-field>
+      <md-outlined-text-field label="Notes (optional)" [(value)]="notes"></md-outlined-text-field>
+      <div><div class="mb-2 text-sm text-gray-600">Customer Signature</div><app-signature-pad class="w-full"></app-signature-pad></div>
+      <div class="flex flex-wrap gap-2 pt-1">
+        <md-filled-button (click)="markDelivered()"><span class="material-symbols-outlined">check</span> Delivered</md-filled-button>
+        <md-outlined-button (click)="markDoorLock()"><span class="material-symbols-outlined">door_open</span> Door Lock</md-outlined-button>
+        <md-outlined-button (click)="markDamaged()"><span class="material-symbols-outlined">report</span> Damaged</md-outlined-button>
+        <md-outlined-button (click)="markReturned()"><span class="material-symbols-outlined">u_turn_left</span> Return to Warehouse</md-outlined-button>
+      </div>
+    </div>
+  </div>
+</div>
+<ng-template #notFound>
+  <div class="card">
+    <div class="text-red-700">Delivery not found.</div>
+    <a routerLink="/deliveries" class="inline-block mt-3"><md-filled-button>Go to list</md-filled-button></a>
+  </div>
+</ng-template>

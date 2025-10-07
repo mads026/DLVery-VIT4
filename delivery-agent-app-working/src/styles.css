@@ -1,0 +1,11 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+md-filled-button, md-outlined-button, md-elevated-card, md-text-button,
+md-fab, md-list, md-list-item, md-outlined-text-field, md-chip {
+  font-family: inherit;
+}
+
+.container { @apply max-w-screen-md mx-auto px-3; }
+.card { @apply bg-white rounded-2xl shadow-md p-4; }
