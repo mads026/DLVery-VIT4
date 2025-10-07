@@ -1,0 +1,8 @@
+<div class="border rounded-lg overflow-hidden bg-white">
+  <canvas #canvas class="w-full touch-none" style="height:180px"
+    (pointerdown)="pointerDown($event)" (pointermove)="pointerMove($event)"
+    (pointerup)="pointerUp()" (pointercancel)="pointerUp()" (pointerleave)="pointerUp()"></canvas>
+  <div class="border-t p-2 flex justify-end">
+    <md-text-button (click)="clear()"><span class="material-symbols-outlined">erase</span> Clear</md-text-button>
+  </div>
+</div>
