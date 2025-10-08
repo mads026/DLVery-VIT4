@@ -1,0 +1,311 @@
+<!--
+File: index.html + app.js (AngularJS 1.x)
+How to use: serve this folder with a static server. Configure backend API endpoints (examples used: /api/inventory, /api/inventory/upload, /api/delivery/track).
+-->
+
+<!-- index.html -->
+<!doctype html>
+<html ng-app="diveryApp">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>DIVery - Inventory Tracking</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.6.2/css/bootstrap.min.css">
+  <style>
+    .status-delivered { color: green; }
+    .status-pending { color: orange; }
+    .status-damaged { color: red; }
+  </style>
+</head>
+<body ng-controller="InventoryCtrl as inv">
+  <nav class="navbar navbar-expand-lg navbar-light bg-light mb-3">
+    <a class="navbar-brand" href="#">DIVery - Inventory</a>
+  </nav>
+
+  <div class="container">
+    <div class="row">
+      <div class="col-md-6">
+        <h5>Add / Update Inventory Item</h5>
+        <form name="itemForm" ng-submit="inv.saveItem()" novalidate>
+          <div class="form-group">
+            <label>SKU Code</label>
+            <input class="form-control" ng-model="inv.newItem.sku" required placeholder="ELEC-BLR-1001">
+          </div>
+          <div class="form-group">
+            <label>Product Name</label>
+            <input class="form-control" ng-model="inv.newItem.name" required>
+          </div>
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label>Category</label>
+              <select class="form-control" ng-model="inv.newItem.category" required>
+                <option value="ELEC">Electronics</option>
+                <option value="FOOD">Perishable</option>
+                <option value="FSHN">Fashion</option>
+                <option value="MED">Essentials</option>
+              </select>
+            </div>
+            <div class="form-group col-md-6">
+              <label>Warehouse</label>
+              <input class="form-control" ng-model="inv.newItem.warehouse" required placeholder="BLR">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group col-md-6">
+              <label>Batch Code</label>
+              <input class="form-control" ng-model="inv.newItem.batchCode" placeholder="FOOD-20251001-B1">
+            </div>
+            <div class="form-group col-md-3">
+              <label>Qty</label>
+              <input type="number" class="form-control" ng-model="inv.newItem.quantity" min="0">
+            </div>
+            <div class="form-group col-md-3">
+              <label>Damaged?</label>
+              <select class="form-control" ng-model="inv.newItem.damaged">
+                <option value="false">No</option>
+                <option value="true">Yes</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-primary" ng-disabled="itemForm.$invalid">Save Item</button>
+          <button type="button" class="btn btn-secondary ml-2" ng-click="inv.resetNew()">Reset</button>
+        </form>
+
+        <hr>
+
+        <h5>Upload Inventory CSV</h5>
+        <form ng-submit="inv.uploadFile()">
+          <div class="form-group">
+            <input type="file" file-model="inv.uploadedFile" accept=".csv" />
+          </div>
+          <button class="btn btn-info" type="submit">Upload</button>
+        </form>
+
+      </div>
+
+      <div class="col-md-6">
+        <h5>Current Inventory</h5>
+        <div class="form-inline mb-2">
+          <input class="form-control mr-2" placeholder="Search SKU or name..." ng-model="inv.q">
+          <select class="form-control mr-2" ng-model="inv.filterCategory">
+            <option value="">All Categories</option>
+            <option value="ELEC">Electronics</option>
+            <option value="FOOD">Perishable</option>
+            <option value="FSHN">Fashion</option>
+            <option value="MED">Essentials</option>
+          </select>
+          <button class="btn btn-outline-secondary" ng-click="inv.getInventory()">Refresh</button>
+        </div>
+
+        <table class="table table-sm table-bordered">
+          <thead>
+            <tr>
+              <th>SKU</th>
+              <th>Name</th>
+              <th>Category</th>
+              <th>Warehouse</th>
+              <th>Batch</th>
+              <th>Qty</th>
+              <th>Status</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr ng-repeat="it in inv.inventory | filter:inv.invFilter">
+              <td>{{it.sku}}</td>
+              <td>{{it.name}}</td>
+              <td>{{it.category}}</td>
+              <td>{{it.warehouse}}</td>
+              <td>{{it.batchCode}}</td>
+              <td>{{it.quantity}}</td>
+              <td>
+                <span ng-class="{'status-delivered': it.status=='Delivered', 'status-pending': it.status=='Pending', 'status-damaged': it.damaged=='true'}">{{ it.damaged=='true' ? 'Damaged' : (it.status || 'In Stock') }}</span>
+              </td>
+              <td>
+                <button class="btn btn-sm btn-success" ng-click="inv.openTrackDialog(it)">Track</button>
+                <button class="btn btn-sm btn-warning ml-1" ng-click="inv.markDamaged(it)">Mark Damaged</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Track Modal (simple implementation) -->
+    <div class="modal" tabindex="-1" role="dialog" ng-show="inv.trackModal">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Track Delivery - {{inv.currentTrack.sku}}</h5>
+            <button type="button" class="close" ng-click="inv.closeTrack()">&times;</button>
+          </div>
+          <div class="modal-body">
+            <p><strong>Product:</strong> {{inv.currentTrack.name}}</p>
+            <p><strong>Last Consignment:</strong> {{inv.lastConsignment}}</p>
+
+            <div class="form-group">
+              <label>Enter Consignment / Agent to track</label>
+              <input class="form-control" ng-model="inv.trackQuery" placeholder="BLR-20250929-AGT03-4821 or AGT-BLR-003">
+            </div>
+
+            <button class="btn btn-primary" ng-click="inv.trackDelivery()">Track</button>
+
+            <div class="mt-3" ng-if="inv.trackResult">
+              <pre>{{inv.trackResult | json}}</pre>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button class="btn btn-secondary" ng-click="inv.closeTrack()">Close</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.8.3/angular.min.js"></script>
+  <script>
+  // app.js (AngularJS 1.x)
+  angular.module('diveryApp', [])
+  .directive('fileModel', ['$parse', function ($parse) {
+      return {
+          restrict: 'A',
+          link: function(scope, element, attrs) {
+              var model = $parse(attrs.fileModel);
+              var modelSetter = model.assign;
+
+              element.bind('change', function(){
+                  scope.$apply(function(){
+                      modelSetter(scope, element[0].files[0]);
+                  });
+              });
+          }
+      };
+  }])
+  .service('InventoryService', ['$http', '$q', function($http, $q){
+      var base = '/api/inventory';
+
+      this.getInventory = function(){
+          return $http.get(base);
+      };
+
+      this.saveItem = function(item){
+          return $http.post(base, item);
+      };
+
+      this.uploadCSV = function(file){
+          var fd = new FormData();
+          fd.append('file', file);
+          return $http.post(base + '/upload', fd, {
+              transformRequest: angular.identity,
+              headers: {'Content-Type': undefined}
+          });
+      };
+
+      this.trackBy = function(query){
+          return $http.get('/api/delivery/track', { params: { q: query } });
+      };
+  }])
+  .controller('InventoryCtrl', ['InventoryService', '$timeout', function(InventoryService, $timeout){
+      var vm = this;
+      vm.inventory = [];
+      vm.newItem = {};
+      vm.uploadedFile = null;
+      vm.q = '';
+      vm.filterCategory = '';
+
+      vm.invFilter = function(i){
+          var q = vm.q && vm.q.toLowerCase();
+          if(vm.filterCategory && i.category !== vm.filterCategory) return false;
+          if(!q) return true;
+          return (i.sku + ' ' + i.name).toLowerCase().indexOf(q) !== -1;
+      };
+
+      vm.resetNew = function(){ vm.newItem = {}; };
+
+      // Use real API when available, otherwise use mock data
+      vm.useMock = true; // set false to call real backend
+
+      var mockData = [
+        { sku:'ELEC-BLR-1001', name:'Bluetooth Speaker', category:'ELEC', warehouse:'BLR', batchCode:'ELEC-20250920-B1', quantity:10, status:'In Stock', damaged:'false' },
+        { sku:'FOOD-DEL-2003', name:'Milk Pack (1L)', category:'FOOD', warehouse:'DEL', batchCode:'FOOD-20250928-B2', quantity:30, status:'Out for Delivery', damaged:'false' },
+        { sku:'FSHN-MUM-3012', name:'T-Shirt (XL)', category:'FSHN', warehouse:'MUM', batchCode:'FSHN-20250915-B5', quantity:0, status:'Returned', damaged:'true' }
+      ];
+
+      vm.getInventory = function(){
+          if(vm.useMock){
+              // simulate async
+              $timeout(function(){ vm.inventory = angular.copy(mockData); }, 300);
+              return;
+          }
+
+          InventoryService.getInventory().then(function(res){
+              vm.inventory = res.data;
+          }, function(err){
+              console.error('Unable to fetch inventory', err);
+          });
+      };
+
+      vm.saveItem = function(){
+          if(vm.useMock){
+              var found = vm.inventory.find(function(x){ return x.sku === vm.newItem.sku; });
+              if(found){
+                  angular.extend(found, vm.newItem);
+              } else {
+                  vm.inventory.push(angular.extend({}, vm.newItem));
+              }
+              vm.resetNew();
+              return;
+          }
+
+          InventoryService.saveItem(vm.newItem).then(function(res){
+              vm.getInventory(); vm.resetNew();
+          }, function(err){ console.error(err); });
+      };
+
+      vm.uploadFile = function(){
+          if(!vm.uploadedFile) return alert('Select a CSV file');
+          if(vm.useMock){
+              alert('Mock upload complete (no backend)');
+              vm.uploadedFile = null;
+              return;
+          }
+
+          InventoryService.uploadCSV(vm.uploadedFile).then(function(res){
+              vm.getInventory();
+              vm.uploadedFile = null;
+          }, function(err){ console.error(err); });
+      };
+
+      vm.openTrackDialog = function(item){
+          vm.currentTrack = item;
+          vm.trackQuery = item.sku;
+          vm.trackResult = null;
+          vm.trackModal = true;
+      };
+      vm.closeTrack = function(){ vm.trackModal = false; vm.currentTrack = null; };
+
+      vm.trackDelivery = function(){
+          if(vm.useMock){
+              vm.trackResult = { consignment: vm.trackQuery, lastStatus: 'Delivered', agent:'AGT-BLR-003', timestamp: '2025-09-29T10:12:00Z' };
+              return;
+          }
+
+          InventoryService.trackBy(vm.trackQuery).then(function(res){ vm.trackResult = res.data; }, function(err){ console.error(err); });
+      };
+
+      vm.markDamaged = function(it){
+          if(!confirm('Mark ' + it.sku + ' as damaged?')) return;
+          it.damaged = 'true';
+          // Optionally update backend
+          if(!vm.useMock){ InventoryService.saveItem(it); }
+      };
+
+      // initial load
+      vm.getInventory();
+  }]);
+  </script>
+</body>
+</html>
