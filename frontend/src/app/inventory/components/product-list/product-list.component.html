@@ -1,0 +1,118 @@
+<div class="product-inventory-container">
+  <!-- Header -->
+  <div class="page-header">
+    <h1 class="page-title">Product Inventory</h1>
+  </div>
+
+  <!-- Controls Section -->
+  <div class="controls-section">
+    <div class="controls-left">
+      <button class="upload-btn" (click)="fileInput.click()">
+        Upload File
+      </button>
+      <input type="file" #fileInput (change)="onFileSelected($event)" accept=".csv,.xlsx" class="hidden">
+      
+      <button class="template-btn" (click)="downloadTemplate()">
+        Download Template
+      </button>
+      
+      <button class="add-product-btn" (click)="openProductForm()">
+        Add Product
+      </button>
+    </div>
+
+    <div class="controls-right">
+      <div class="search-container">
+        <input type="text" 
+               class="search-input" 
+               placeholder="Search products..."
+               [(ngModel)]="searchTerm"
+               (input)="onSearchChange()">
+      </div>
+      
+      <select class="category-select" [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
+        <option value="">All Categories</option>
+        <option *ngFor="let category of categories" [value]="category">
+          {{ category.replace('_', ' ') }}
+        </option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Filter Checkboxes -->
+  <div class="filter-checkboxes">
+    <label class="checkbox-container">
+      <input type="checkbox" [(ngModel)]="showDamagedOnly" (change)="onDamagedFilterChange()">
+      <span class="checkmark"></span>
+      Damaged Only
+    </label>
+    
+    <label class="checkbox-container">
+      <input type="checkbox" [(ngModel)]="showPerishableOnly" (change)="onPerishableFilterChange()">
+      <span class="checkmark"></span>
+      Perishable Only
+    </label>
+  </div>
+
+  <!-- Products Table -->
+  <div class="table-container">
+    <div *ngIf="loading" class="loading-state">
+      <div class="loading-text">Loading products...</div>
+    </div>
+
+    <div *ngIf="!loading && filteredProducts.length === 0" class="no-products">
+      No products found matching your criteria.
+    </div>
+
+    <table *ngIf="!loading && filteredProducts.length > 0" class="products-table">
+      <thead>
+        <tr class="table-header">
+          <th class="col-sku">SKU</th>
+          <th class="col-name">Name</th>
+          <th class="col-category">Category</th>
+          <th class="col-quantity">Quantity</th>
+          <th class="col-price">Unit Price</th>
+          <th class="col-status">Status</th>
+          <th class="col-actions">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let product of filteredProducts" class="table-row">
+          <td class="col-sku">
+            <span class="sku-text">{{ product.sku }}</span>
+          </td>
+          <td class="col-name">
+            <div class="product-info">
+              <div class="product-name">{{ product.name }}</div>
+              <div class="product-description" *ngIf="product.description">{{ product.description }}</div>
+            </div>
+          </td>
+          <td class="col-category">
+            <span class="category-text">{{ product.category.replace('_', ' ') }}</span>
+          </td>
+          <td class="col-quantity">
+            <span class="quantity-text" [class.low-stock]="product.quantity < 10">
+              {{ product.quantity }}
+            </span>
+          </td>
+          <td class="col-price">
+            <span class="price-text">₹{{ product.unitPrice | number:'1.2-2' }}</span>
+          </td>
+          <td class="col-status">
+            <span class="status-badge" [ngClass]="getStatusClass(product)">
+              {{ getStatusText(product) }}
+            </span>
+          </td>
+          <td class="col-actions">
+            <button class="edit-btn" (click)="openProductForm(product)">
+              Edit
+            </button>
+            <button class="delete-btn" (click)="deleteProduct(product)">
+              Delete
+            </button>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</div>

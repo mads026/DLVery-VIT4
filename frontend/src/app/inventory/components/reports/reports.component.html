@@ -1,0 +1,246 @@
+<div class="reports-container">
+  <!-- Report Filters Section -->
+  <section class="filters-section">
+    <div class="filters-header">
+      <div class="filters-title">
+        <mat-icon>assessment</mat-icon>
+        <h2>Report Filters</h2>
+      </div>
+      <p class="filters-subtitle">Configure date range and filters for reports</p>
+    </div>
+
+    <div class="filters-content">
+      <div class="filter-row">
+        <div class="filter-group">
+          <label class="filter-label">From Date</label>
+          <mat-form-field appearance="outline" class="date-field">
+            <input matInput
+                   [matDatepicker]="fromPicker"
+                   [(ngModel)]="fromDate"
+                   (dateChange)="onDateChange()"
+                   placeholder="01-01-2024">
+            <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
+            <mat-datepicker #fromPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">To Date</label>
+          <mat-form-field appearance="outline" class="date-field">
+            <input matInput
+                   [matDatepicker]="toPicker"
+                   [(ngModel)]="toDate"
+                   (dateChange)="onDateChange()"
+                   placeholder="31-01-2024">
+            <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
+            <mat-datepicker #toPicker></mat-datepicker>
+          </mat-form-field>
+        </div>
+
+        <div class="filter-group">
+          <label class="filter-label">Delivery Agent</label>
+          <mat-form-field appearance="outline" class="agent-field">
+            <mat-select [(value)]="selectedAgent" (selectionChange)="onAgentChange()" placeholder="All Agents">
+              <mat-option value="">All Agents</mat-option>
+              <mat-option *ngFor="let agent of availableAgents" [value]="agent">
+                {{ agent }}
+              </mat-option>
+            </mat-select>
+            <mat-icon matSuffix>expand_more</mat-icon>
+          </mat-form-field>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Report Tabs Section -->
+  <section class="tabs-section">
+    <div class="tab-buttons">
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'delivery'"
+        (click)="setActiveTab('delivery')">
+        Delivery Report
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'damaged'"
+        (click)="setActiveTab('damaged')">
+        Damaged Goods
+      </button>
+      <button
+        class="tab-button"
+        [class.active]="activeTab === 'pending'"
+        (click)="setActiveTab('pending')">
+        Pending by Agent
+      </button>
+    </div>
+  </section>
+
+  <!-- Report Content Section -->
+  <section class="report-content">
+
+    <!-- Delivery Report Tab -->
+    <div *ngIf="activeTab === 'delivery'" class="report-panel">
+      <div class="report-header">
+         <div class="report-info">
+           <h3 class="report-title">Delivered Goods Report</h3>
+           <p class="report-subtitle">Goods delivered from {{ formatDate(fromDate) }} to {{ formatDate(toDate) }}</p>
+         </div>
+        <button mat-raised-button class="export-btn" (click)="exportDeliveryReport()">
+          <mat-icon>download</mat-icon>
+          Export
+        </button>
+      </div>
+
+      <div class="report-table-container">
+        <div *ngIf="loading" class="loading-state">
+          <mat-icon class="spin">refresh</mat-icon>
+          <p>Loading report data...</p>
+        </div>
+
+        <div *ngIf="!loading && filteredDeliveries.length === 0" class="empty-state">
+          <mat-icon>description</mat-icon>
+          <h4>No deliveries found</h4>
+          <p>Try adjusting your date range or filters</p>
+        </div>
+
+        <table *ngIf="!loading && filteredDeliveries.length > 0" class="report-table">
+          <thead>
+            <tr>
+              <th>Delivery ID</th>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Agent</th>
+              <th>Quantity</th>
+              <th>Status</th>
+              <th>Scheduled Date</th>
+              <th>Delivered Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let delivery of filteredDeliveries" class="table-row">
+              <td class="delivery-id">{{ delivery.id }}</td>
+              <td class="product-name">{{ getFirstProductName(delivery) }}</td>
+              <td class="sku">{{ getFirstProductSku(delivery) }}</td>
+              <td class="agent">{{ getAgentName(delivery.deliveryAgent) }}</td>
+              <td class="quantity">{{ getTotalItems(delivery) }}</td>
+              <td class="status">
+                <span class="status-badge" [ngClass]="getStatusClass(delivery.status)">
+                  {{ formatStatus(delivery.status) }}
+                </span>
+              </td>
+              <td class="date">{{ delivery.createdAt | date:'M/d/yyyy' }}</td>
+              <td class="date">{{ getDeliveredDate(delivery) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Damaged Goods Tab -->
+    <div *ngIf="activeTab === 'damaged'" class="report-panel">
+      <div class="report-header">
+        <div class="report-info">
+          <h3 class="report-title">Damaged Goods Report</h3>
+          <p class="report-subtitle">Items damaged during delivery</p>
+        </div>
+        <button mat-raised-button class="export-btn" (click)="exportDamagedReport()">
+          <mat-icon>download</mat-icon>
+          Export
+        </button>
+      </div>
+
+      <div class="report-table-container">
+        <table *ngIf="damagedDeliveries.length > 0" class="report-table">
+          <thead>
+            <tr>
+              <th>Delivery ID</th>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Agent</th>
+              <th>Quantity</th>
+              <th>Status</th>
+              <th>Scheduled Date</th>
+              <th>Delivered Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let delivery of damagedDeliveries" class="table-row">
+              <td class="delivery-id">{{ delivery.id }}</td>
+              <td class="product-name">{{ getFirstProductName(delivery) }}</td>
+              <td class="sku">{{ getFirstProductSku(delivery) }}</td>
+              <td class="agent">{{ getAgentName(delivery.deliveryAgent) }}</td>
+              <td class="quantity">{{ getTotalItems(delivery) }}</td>
+              <td class="status">
+                <span class="status-badge damaged">DAMAGED</span>
+              </td>
+              <td class="date">{{ delivery.createdAt | date:'M/d/yyyy' }}</td>
+              <td class="date">—</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div *ngIf="damagedDeliveries.length === 0" class="empty-state">
+          <mat-icon>check_circle</mat-icon>
+          <h4>No damaged goods</h4>
+          <p>All deliveries are in good condition</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pending by Agent Tab -->
+    <div *ngIf="activeTab === 'pending'" class="report-panel">
+      <div class="report-header">
+        <div class="report-info">
+          <h3 class="report-title">Pending Deliveries by Agent</h3>
+          <p class="report-subtitle">Deliveries awaiting completion</p>
+        </div>
+        <button mat-raised-button class="export-btn" (click)="exportPendingReport()">
+          <mat-icon>download</mat-icon>
+          Export
+        </button>
+      </div>
+
+      <div class="report-table-container">
+        <table *ngIf="pendingDeliveries.length > 0" class="report-table">
+          <thead>
+            <tr>
+              <th>Delivery ID</th>
+              <th>Product</th>
+              <th>SKU</th>
+              <th>Agent</th>
+              <th>Quantity</th>
+              <th>Status</th>
+              <th>Scheduled Date</th>
+              <th>Delivered Date</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let delivery of pendingDeliveries" class="table-row">
+              <td class="delivery-id">{{ delivery.id }}</td>
+              <td class="product-name">{{ getFirstProductName(delivery) }}</td>
+              <td class="sku">{{ getFirstProductSku(delivery) }}</td>
+              <td class="agent">{{ getAgentName(delivery.deliveryAgent) }}</td>
+              <td class="quantity">{{ getTotalItems(delivery) }}</td>
+              <td class="status">
+                <span class="status-badge" [ngClass]="getStatusClass(delivery.status)">
+                  {{ formatStatus(delivery.status) }}
+                </span>
+              </td>
+              <td class="date">{{ delivery.createdAt | date:'M/d/yyyy' }}</td>
+              <td class="date">—</td>
+            </tr>
+          </tbody>
+        </table>
+
+        <div *ngIf="pendingDeliveries.length === 0" class="empty-state">
+          <mat-icon>check_circle</mat-icon>
+          <h4>No pending deliveries</h4>
+          <p>All deliveries have been completed</p>
+        </div>
+      </div>
+    </div>
+
+  </section>
+</div>

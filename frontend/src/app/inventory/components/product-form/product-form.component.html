@@ -1,0 +1,95 @@
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit Product' : 'Add New Product' }}</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="productForm" class="space-y-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <!-- SKU field - only shown in edit mode as read-only -->
+      <mat-form-field *ngIf="isEditMode">
+        <mat-label>SKU (Auto-generated)</mat-label>
+        <input matInput formControlName="sku" readonly>
+        <mat-hint>SKU is automatically generated and cannot be changed</mat-hint>
+      </mat-form-field>
+
+      <mat-form-field [class.md:col-span-2]="!isEditMode">
+        <mat-label>Product Name</mat-label>
+        <input matInput formControlName="name">
+        <mat-error *ngIf="productForm.get('name')?.hasError('required')">
+          Product name is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field class="w-full">
+      <mat-label>Description</mat-label>
+      <textarea matInput formControlName="description" rows="3"></textarea>
+    </mat-form-field>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <mat-form-field>
+        <mat-label>Category</mat-label>
+        <mat-select formControlName="category">
+          <mat-option *ngFor="let category of categories" [value]="category">
+            {{ category.replace('_', ' ') }}
+          </mat-option>
+        </mat-select>
+        <mat-error *ngIf="productForm.get('category')?.hasError('required')">
+          Category is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Quantity</mat-label>
+        <input matInput type="number" formControlName="quantity" min="0">
+        <mat-error *ngIf="productForm.get('quantity')?.hasError('required')">
+          Quantity is required
+        </mat-error>
+        <mat-error *ngIf="productForm.get('quantity')?.hasError('min')">
+          Quantity must be 0 or greater
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field class="w-full">
+      <mat-label>Unit Price</mat-label>
+      <input matInput type="number" formControlName="unitPrice" min="0" step="0.01">
+      <span matPrefix>₹&nbsp;</span>
+      <mat-error *ngIf="productForm.get('unitPrice')?.hasError('required')">
+        Unit price is required
+      </mat-error>
+      <mat-error *ngIf="productForm.get('unitPrice')?.hasError('min')">
+        Unit price must be 0 or greater
+      </mat-error>
+    </mat-form-field>
+
+    <div class="flex flex-col space-y-2">
+      <mat-checkbox formControlName="isDamaged">
+        Mark as Damaged
+      </mat-checkbox>
+
+      <mat-checkbox formControlName="isPerishable" (change)="onPerishableChange()">
+        Perishable Item
+      </mat-checkbox>
+    </div>
+
+    <mat-form-field class="w-full" *ngIf="productForm.get('isPerishable')?.value">
+      <mat-label>Expiry Date</mat-label>
+      <input matInput 
+             [matDatepicker]="picker" 
+             formControlName="expiryDate"
+             [min]="minDate"
+             placeholder="Select expiry date">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+      <mat-error *ngIf="productForm.get('expiryDate')?.hasError('required')">
+        Expiry date is required for perishable items
+      </mat-error>
+    </mat-form-field>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()">Cancel</button>
+  <button mat-raised-button color="primary" (click)="onSubmit()" [disabled]="!productForm.valid">
+    {{ isEditMode ? 'Update' : 'Create' }}
+  </button>
+</mat-dialog-actions>

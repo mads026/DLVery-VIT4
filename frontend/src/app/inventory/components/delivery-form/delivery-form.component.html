@@ -1,0 +1,157 @@
+<h2 mat-dialog-title>Create New Delivery</h2>
+
+<mat-dialog-content>
+  <form [formGroup]="deliveryForm" class="space-y-4">
+    <!-- Delivery Details -->
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <mat-form-field>
+        <mat-label>Delivery Agent</mat-label>
+        <input 
+          matInput 
+          formControlName="deliveryAgent"
+          [matAutocomplete]="agentAuto"
+          placeholder="Type to search agent">
+        <mat-autocomplete 
+          #agentAuto="matAutocomplete"
+          [displayWith]="displayAgentFn.bind(this)">
+          <mat-option *ngFor="let agent of filteredAgents | async" [value]="agent.username">
+            <span>{{ agent.displayName }}</span>
+          </mat-option>
+        </mat-autocomplete>
+        <mat-error *ngIf="deliveryForm.get('deliveryAgent')?.hasError('required')">
+          Delivery agent is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Priority</mat-label>
+        <mat-select formControlName="priority">
+          <mat-option value="EMERGENCY">🚨 Emergency</mat-option>
+          <mat-option value="PERISHABLE">🥛 Perishable</mat-option>
+          <mat-option value="ESSENTIAL">⚡ Essential</mat-option>
+          <mat-option value="STANDARD">📦 Standard</mat-option>
+          <mat-option value="LOW">📋 Low Priority</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <mat-form-field>
+        <mat-label>Customer Name</mat-label>
+        <input matInput formControlName="customerName">
+        <mat-error *ngIf="deliveryForm.get('customerName')?.hasError('required')">
+          Customer name is required
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field>
+        <mat-label>Customer Phone</mat-label>
+        <input matInput formControlName="customerPhone">
+        <mat-error *ngIf="deliveryForm.get('customerPhone')?.hasError('required')">
+          Customer phone is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <mat-form-field>
+        <mat-label>Scheduled Date</mat-label>
+        <input matInput type="date" formControlName="scheduledDate">
+        <mat-error *ngIf="deliveryForm.get('scheduledDate')?.hasError('required')">
+          Scheduled date is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <mat-form-field class="w-full">
+      <mat-label>Customer Address</mat-label>
+      <textarea matInput formControlName="customerAddress" rows="2"></textarea>
+      <mat-error *ngIf="deliveryForm.get('customerAddress')?.hasError('required')">
+        Customer address is required
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="w-full">
+      <mat-label>Notes</mat-label>
+      <textarea matInput formControlName="notes" rows="2"></textarea>
+    </mat-form-field>
+
+    <!-- Delivery Items -->
+    <div class="border-t pt-4">
+      <div class="flex justify-between items-center mb-4">
+        <h3 class="text-lg font-semibold">Delivery Items</h3>
+        <button type="button" mat-raised-button (click)="addItem()">
+          <mat-icon>add</mat-icon>
+          Add Item
+        </button>
+      </div>
+
+      <div formArrayName="items" class="space-y-4">
+        <div *ngFor="let item of items.controls; let i = index" 
+             [formGroupName]="i" 
+             class="border rounded p-4 bg-gray-50">
+          
+          <div class="flex justify-between items-start mb-4">
+            <h4 class="font-medium">Item {{ i + 1 }}</h4>
+            <button type="button" 
+                    mat-icon-button 
+                    (click)="removeItem(i)"
+                    [disabled]="items.length === 1"
+                    class="text-red-600">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <mat-form-field>
+              <mat-label>Product</mat-label>
+              <mat-select formControlName="productSku" (selectionChange)="onProductChange(i)">
+                <mat-option *ngFor="let product of availableProducts" [value]="product.sku">
+                  {{ product.name }} ({{ product.sku }}) - Available: {{ product.quantity }}
+                </mat-option>
+              </mat-select>
+              <mat-error *ngIf="item.get('productSku')?.hasError('required')">
+                Product is required
+              </mat-error>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Quantity</mat-label>
+              <input matInput 
+                     type="number" 
+                     formControlName="quantity" 
+                     min="1" 
+                     [max]="getMaxQuantity(item.get('productSku')?.value)">
+              <mat-error *ngIf="item.get('quantity')?.hasError('required')">
+                Quantity is required
+              </mat-error>
+              <mat-error *ngIf="item.get('quantity')?.hasError('min')">
+                Quantity must be at least 1
+              </mat-error>
+              <mat-error *ngIf="item.get('quantity')?.hasError('max')">
+                Quantity exceeds available stock ({{ getMaxQuantity(item.get('productSku')?.value) }})
+              </mat-error>
+            </mat-form-field>
+          </div>
+
+
+
+          <div *ngIf="item.get('productSku')?.value" class="mt-2 text-sm text-gray-600">
+            Selected: {{ getProductName(item.get('productSku')?.value) }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="onCancel()" [disabled]="loading">Cancel</button>
+  <button mat-raised-button 
+          color="primary" 
+          (click)="onSubmit()" 
+          [disabled]="!deliveryForm.valid || loading">
+    <span *ngIf="loading">Creating...</span>
+    <span *ngIf="!loading">Create Delivery</span>
+  </button>
+</mat-dialog-actions>
