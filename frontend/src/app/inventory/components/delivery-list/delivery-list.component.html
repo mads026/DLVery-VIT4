@@ -1,14 +1,23 @@
-<div class="delivery-container">
-  <!-- Header Section -->
-  <div class="delivery-header">
-    <div class="header-content">
-      <div class="header-text">
-        <h1 class="delivery-title">Delivery Management</h1>
-        <p class="delivery-subtitle">Manage and track product deliveries</p>
-      </div>
-      <div class="header-actions">
-        <button mat-raised-button color="primary" (click)="openDeliveryForm()" class="schedule-btn">
-          <mat-icon>add</mat-icon>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+  <!-- Modern Header -->
+  <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
+              <mat-icon class="!text-white !text-2xl">local_shipping</mat-icon>
+            </div>
+            Delivery Management
+          </h1>
+          <p class="mt-2 text-sm text-gray-600">Manage and track product deliveries</p>
+        </div>
+        <button 
+          mat-fab 
+          extended
+          class="!bg-gradient-to-r !from-primary-600 !to-primary-700 !text-white !shadow-lg hover:!shadow-xl !transition-all"
+          (click)="openDeliveryForm()">
+          <mat-icon class="!mr-2">add</mat-icon>
           Schedule Delivery
         </button>
       </div>
@@ -16,82 +25,88 @@
   </div>
 
   <!-- Loading State -->
-  <div *ngIf="loading" class="loading-container">
-    <div class="loading-spinner">
-      <mat-icon class="spin">refresh</mat-icon>
+  <div *ngIf="loading" class="flex items-center justify-center min-h-[400px]">
+    <div class="text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
+        <mat-icon class="!text-primary-600 !text-4xl animate-spin">refresh</mat-icon>
+      </div>
+      <p class="text-gray-600 font-medium">Loading delivery data...</p>
     </div>
-    <p class="loading-text">Loading delivery data...</p>
   </div>
 
   <!-- Dashboard Content -->
-  <div *ngIf="!loading" class="delivery-content">
+  <div *ngIf="!loading" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
     
-    <!-- Key Performance Indicators -->
-    <section class="kpi-section">
-      <div class="kpi-grid">
+    <!-- KPI Cards -->
+    <section>
+      <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+        <mat-icon class="!text-gray-600">analytics</mat-icon>
+        Delivery Overview
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
         
-        <!-- Total Deliveries Card -->
-        <div class="kpi-card total-deliveries">
-          <div class="kpi-header">
-            <div class="kpi-title">
-              <mat-icon>local_shipping</mat-icon>
-              <span>Total Deliveries</span>
+        <!-- Total Deliveries -->
+        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+              <mat-icon class="!text-white !text-2xl">local_shipping</mat-icon>
             </div>
           </div>
-          <div class="kpi-main">
-            <div class="kpi-value">{{ getTotalDeliveries() }}</div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-gray-600">Total</p>
+            <p class="text-3xl font-bold text-gray-900">{{ getTotalDeliveries() }}</p>
           </div>
         </div>
 
-        <!-- Pending Card -->
-        <div class="kpi-card pending">
-          <div class="kpi-header">
-            <div class="kpi-title">
-              <mat-icon>schedule</mat-icon>
-              <span>Pending</span>
+        <!-- Pending -->
+        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
+              <mat-icon class="!text-white !text-2xl">schedule</mat-icon>
             </div>
           </div>
-          <div class="kpi-main">
-            <div class="kpi-value pending-color">{{ getPendingDeliveries() }}</div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-gray-600">Pending</p>
+            <p class="text-3xl font-bold text-yellow-600">{{ getPendingDeliveries() }}</p>
           </div>
         </div>
 
-        <!-- In Transit Card -->
-        <div class="kpi-card in-transit">
-          <div class="kpi-header">
-            <div class="kpi-title">
-              <mat-icon>local_shipping</mat-icon>
-              <span>In Transit</span>
+        <!-- In Transit -->
+        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+              <mat-icon class="!text-white !text-2xl">directions_car</mat-icon>
             </div>
           </div>
-          <div class="kpi-main">
-            <div class="kpi-value transit-color">{{ getInTransitDeliveries() }}</div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-gray-600">In Transit</p>
+            <p class="text-3xl font-bold text-purple-600">{{ getInTransitDeliveries() }}</p>
           </div>
         </div>
 
-        <!-- Delivered Card -->
-        <div class="kpi-card delivered">
-          <div class="kpi-header">
-            <div class="kpi-title">
-              <mat-icon>check_circle</mat-icon>
-              <span>Delivered</span>
+        <!-- Delivered -->
+        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+              <mat-icon class="!text-white !text-2xl">check_circle</mat-icon>
             </div>
           </div>
-          <div class="kpi-main">
-            <div class="kpi-value delivered-color">{{ getDeliveredCount() }}</div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-gray-600">Delivered</p>
+            <p class="text-3xl font-bold text-green-600">{{ getDeliveredCount() }}</p>
           </div>
         </div>
 
-        <!-- Damaged Card -->
-        <div class="kpi-card damaged">
-          <div class="kpi-header">
-            <div class="kpi-title">
-              <mat-icon>warning</mat-icon>
-              <span>Damaged</span>
+        <!-- Damaged -->
+        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+              <mat-icon class="!text-white !text-2xl">warning</mat-icon>
             </div>
           </div>
-          <div class="kpi-main">
-            <div class="kpi-value damaged-color">{{ getDamagedDeliveries() }}</div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-gray-600">Damaged</p>
+            <p class="text-3xl font-bold text-red-600">{{ getDamagedDeliveries() }}</p>
           </div>
         </div>
 
@@ -99,124 +114,127 @@
     </section>
 
     <!-- Filters Section -->
-    <section class="filter-section">
-      <h2 class="filter-title">Filter Deliveries</h2>
-      <p class="filter-subtitle">Filter deliveries by status and agent</p>
-      
-      <div class="filter-grid">
-        <div class="filter-group">
-          <label class="filter-label">Status</label>
-          <mat-form-field appearance="outline" class="filter-field">
-            <mat-select [(value)]="selectedStatus" (selectionChange)="onStatusChange()" placeholder="All Status">
-              <mat-option value="">All Status</mat-option>
-              <mat-option value="PENDING">Pending</mat-option>
-              <mat-option value="IN_TRANSIT">In Transit</mat-option>
-              <mat-option value="DELIVERED">Delivered</mat-option>
-              <mat-option value="DOOR_LOCKED">Door Locked</mat-option>
-              <mat-option value="DAMAGED_IN_TRANSIT">Damaged</mat-option>
-              <mat-option value="RETURNED">Returned</mat-option>
-              <mat-option value="CANCELLED">Cancelled</mat-option>
-            </mat-select>
-            <mat-icon matSuffix>expand_more</mat-icon>
-          </mat-form-field>
-        </div>
-
-        <div class="filter-group">
-          <label class="filter-label">Delivery Agent</label>
-          <mat-form-field appearance="outline" class="filter-field">
-            <mat-select [(value)]="selectedAgent" (selectionChange)="onAgentChange()" placeholder="All Agents">
-              <mat-option value="">All Agents</mat-option>
-              <mat-option *ngFor="let agent of agents" [value]="agent">
-                {{ agent }}
-              </mat-option>
-            </mat-select>
-            <mat-icon matSuffix>expand_more</mat-icon>
-          </mat-form-field>
-        </div>
+    <div class="bg-white rounded-2xl shadow-card p-6 border border-gray-100">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <mat-icon class="!text-gray-600">filter_list</mat-icon>
+          Filter Deliveries
+        </h3>
+        <p class="text-sm text-gray-600 mt-1">Filter by status and delivery agent</p>
       </div>
-    </section>
 
-    <!-- Search and Delivery List -->
-    <section class="delivery-list-section">
-      <div class="list-header">
-        <div class="list-title-group">
-          <h2 class="list-title">Delivery List</h2>
-          <p class="list-subtitle">Showing {{ getFilteredCount() }} of {{ getTotalDeliveries() }} deliveries</p>
-        </div>
-        
-        <div class="search-group">
-          <mat-form-field appearance="outline" class="search-field">
-            <input matInput 
-                   [(ngModel)]="searchTerm" 
-                   (ngModelChange)="onSearchChange()" 
-                   placeholder="Search deliveries...">
-            <mat-icon matSuffix>search</mat-icon>
-          </mat-form-field>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <app-modern-select
+          label="Status"
+          [options]="statusOptions"
+          prefixIcon="filter_alt"
+          [(ngModel)]="selectedStatus"
+          (valueChange)="onStatusChange()">
+        </app-modern-select>
+
+        <app-modern-select
+          label="Delivery Agent"
+          [options]="agentOptions"
+          prefixIcon="person"
+          [(ngModel)]="selectedAgent"
+          (valueChange)="onAgentChange()">
+        </app-modern-select>
+      </div>
+    </div>
+
+    <!-- Delivery List -->
+    <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
+      <div class="p-6 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <mat-icon class="!text-gray-600">list_alt</mat-icon>
+              Delivery List
+            </h3>
+            <p class="text-sm text-gray-600 mt-1">
+              Showing {{ getFilteredCount() }} of {{ getTotalDeliveries() }} deliveries
+            </p>
+          </div>
+          
+          <div class="w-64">
+            <app-modern-input
+              [(ngModel)]="searchTerm"
+              (valueChange)="onSearchChange()"
+              placeholder="Search deliveries..."
+              prefixIcon="search"
+              [clearable]="true">
+            </app-modern-input>
+          </div>
         </div>
       </div>
 
-      <div class="table-container">
-        <div *ngIf="filteredDeliveries.length === 0" class="no-results">
-          <mat-icon>search_off</mat-icon>
-          <h4>No deliveries found</h4>
-          <p>Try adjusting your search terms or filters</p>
-          <button mat-button (click)="clearFilters()">Clear all filters</button>
+      <!-- No Results -->
+      <div *ngIf="filteredDeliveries.length === 0" class="p-12 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+          <mat-icon class="!text-gray-400 !text-4xl">search_off</mat-icon>
         </div>
-        
-        <table *ngIf="filteredDeliveries.length > 0" class="delivery-table">
-          <thead>
+        <h4 class="text-lg font-semibold text-gray-900 mb-2">No deliveries found</h4>
+        <p class="text-gray-600 mb-4">Try adjusting your search terms or filters</p>
+        <button mat-raised-button color="primary" (click)="clearFilters()" class="!rounded-lg">
+          Clear all filters
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div *ngIf="filteredDeliveries.length > 0" class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b border-gray-200">
             <tr>
-              <th>Delivery ID</th>
-              <th>Customer</th>
-              <th>Agent</th>
-              <th>Status</th>
-              <th>Items</th>
-              <th>Created</th>
-              <th>Delivered</th>
-              <th>Reason</th>
-              <th>Signature</th>
-              <th>Actions</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">ID</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Customer</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Agent</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Items</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Delivered</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Reason</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Signature</th>
+              <th class="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
             </tr>
           </thead>
-          <tbody>
-            <tr *ngFor="let delivery of filteredDeliveries; let i = index" class="table-row">
-              <td class="delivery-id-cell">{{ delivery.id || (i + 1) }}</td>
-              <td class="customer-cell">{{ getCustomerName(delivery) }}</td>
-              <td class="agent-cell">{{ delivery.deliveryAgent }}</td>
-              <td class="status-cell">
-                <span class="status-badge" [ngClass]="getStatusClass(delivery.status)">
-                  <mat-icon class="status-icon">{{ getStatusIcon(delivery.status) }}</mat-icon>
+          <tbody class="divide-y divide-gray-200">
+            <tr *ngFor="let delivery of filteredDeliveries; let i = index" class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-primary-600">{{ delivery.id || (i + 1) }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ getCustomerName(delivery) }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ delivery.deliveryAgent }}</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span [class]="'inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ' + getStatusColor(delivery.status)">
+                  <mat-icon class="!text-xs">{{ getStatusIcon(delivery.status) }}</mat-icon>
                   {{ formatStatus(delivery.status) }}
                 </span>
               </td>
-              <td class="quantity-cell">{{ getTotalItems(delivery) }}</td>
-              <td class="date-cell">{{ delivery.createdAt | date:'M/d/yyyy' }}</td>
-              <td class="date-cell">{{ getDeliveredDate(delivery) }}</td>
-              <td class="reason-cell">
-                <div class="reason-content" *ngIf="getStatusReason(delivery) !== '—'" [title]="getStatusReason(delivery)">
-                  <span class="reason-text">{{ getStatusReason(delivery) }}</span>
-                </div>
-                <span *ngIf="getStatusReason(delivery) === '—'">—</span>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ getTotalItems(delivery) }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ delivery.createdAt | date:'M/d/yyyy' }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ getDeliveredDate(delivery) }}</td>
+              <td class="px-6 py-4 text-sm text-gray-600 max-w-xs truncate" [title]="getStatusReason(delivery)">
+                {{ getStatusReason(delivery) }}
               </td>
-              <td class="signature-cell">
-                <div class="signature-content" *ngIf="getCustomerSignature(delivery) !== '—'">
-                  <button
-                    mat-raised-button
-                    color="primary"
-                    class="view-signature-btn"
-                    (click)="viewSignature(delivery)"
-                    title="View customer signature">
-                    <mat-icon>visibility</mat-icon>
-                    View Signature
-                  </button>
-                </div>
-                <span *ngIf="getCustomerSignature(delivery) === '—'">—</span>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <button 
+                  *ngIf="getCustomerSignature(delivery) !== '—'"
+                  mat-button
+                  class="!text-primary-600 !font-medium !text-xs"
+                  (click)="viewSignature(delivery)">
+                  <mat-icon class="!text-base !mr-1">visibility</mat-icon>
+                  View
+                </button>
+                <span *ngIf="getCustomerSignature(delivery) === '—'" class="text-gray-400">—</span>
               </td>
-              <td class="actions-cell">
-                <button mat-button
-                        class="update-btn"
-                        (click)="openUpdateDialog(delivery)"
-                        [disabled]="!canUpdateStatus(delivery.status)">
+              <td class="px-6 py-4 whitespace-nowrap text-center">
+                <button 
+                  mat-raised-button
+                  class="!text-sm !font-medium !rounded-lg"
+                  [class.!bg-primary-600]="canUpdateStatus(delivery.status)"
+                  [class.!text-white]="canUpdateStatus(delivery.status)"
+                  [class.!bg-gray-100]="!canUpdateStatus(delivery.status)"
+                  [class.!text-gray-400]="!canUpdateStatus(delivery.status)"
+                  (click)="openUpdateDialog(delivery)"
+                  [disabled]="!canUpdateStatus(delivery.status)">
                   {{ getUpdateButtonText(delivery.status) }}
                 </button>
               </td>
@@ -224,7 +242,6 @@
           </tbody>
         </table>
       </div>
-    </section>
-
+    </div>
   </div>
 </div>

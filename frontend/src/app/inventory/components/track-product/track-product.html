@@ -1,98 +1,163 @@
-<div class="track-product-container">
-  <div class="page-header">
-    <h1 class="page-title">Track Product Deliveries</h1>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+  <!-- Modern Header -->
+  <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center shadow-lg">
+              <mat-icon class="!text-white !text-2xl">track_changes</mat-icon>
+            </div>
+            Track Product Deliveries
+          </h1>
+          <p class="mt-2 text-sm text-gray-600">Search and monitor product deliveries by SKU or agent</p>
+        </div>
+      </div>
+    </div>
   </div>
 
-  <mat-card class="search-card">
-    <mat-card-content>
-      <form [formGroup]="trackForm" (ngSubmit)="onTrack()" class="search-form">
-        <div class="form-row">
-          <mat-form-field appearance="outline">
-            <mat-label>Product SKU</mat-label>
-            <input matInput formControlName="sku" placeholder="Enter SKU to filter by product" [matAutocomplete]="skuAuto">
-            <mat-autocomplete #skuAuto="matAutocomplete">
-              <mat-option *ngFor="let sku of filteredSkus | async" [value]="sku">
-                {{ sku }}
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <!-- Search Card -->
+    <div class="bg-white rounded-2xl shadow-card p-6 border border-gray-100">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <mat-icon class="!text-gray-600">search</mat-icon>
+          Search Deliveries
+        </h3>
+        <p class="text-sm text-gray-600 mt-1">Filter deliveries by product SKU or delivery agent</p>
+      </div>
 
-          <mat-form-field appearance="outline">
-            <mat-label>Delivery Agent</mat-label>
-            <input matInput formControlName="agent" placeholder="Enter agent name to filter by person" [matAutocomplete]="agentAuto">
-            <mat-autocomplete #agentAuto="matAutocomplete">
-              <mat-option *ngFor="let agent of filteredAgents | async" [value]="agent">
-                {{ agent }}
-              </mat-option>
-            </mat-autocomplete>
-          </mat-form-field>
+      <form [formGroup]="trackForm" (ngSubmit)="onTrack()">
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <app-modern-input
+            label="Product SKU"
+            placeholder="Enter SKU to search"
+            prefixIcon="inventory_2"
+            formControlName="sku"
+            [clearable]="true">
+          </app-modern-input>
 
-          <button mat-raised-button color="primary" type="submit" [disabled]="loading">
-            <mat-icon>search</mat-icon>
-            Search
-          </button>
+          <app-modern-input
+            label="Delivery Agent"
+            placeholder="Enter agent name"
+            prefixIcon="person"
+            formControlName="agent"
+            [clearable]="true">
+          </app-modern-input>
 
-          <button mat-stroked-button type="button" (click)="clearSearch()" [disabled]="loading">
-            <mat-icon>clear</mat-icon>
-            Clear
-          </button>
+          <div class="pt-7">
+            <button 
+              type="submit" 
+              [disabled]="loading"
+              class="w-full h-[50px] flex items-center justify-center gap-2 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-lg transition-all border-2 border-transparent disabled:opacity-50 disabled:cursor-not-allowed">
+              <mat-icon>search</mat-icon>
+              <span>Search</span>
+            </button>
+          </div>
+
+          <div class="pt-7">
+            <button 
+              type="button" 
+              (click)="clearSearch()" 
+              [disabled]="loading"
+              class="w-full h-[50px] flex items-center justify-center gap-2 bg-white border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all disabled:opacity-50 disabled:cursor-not-allowed">
+              <mat-icon>clear</mat-icon>
+              <span>Clear</span>
+            </button>
+          </div>
         </div>
       </form>
-    </mat-card-content>
-  </mat-card>
+    </div>
 
-  <div *ngIf="loading" class="loading-state">
-    <div class="loading-text">Searching deliveries...</div>
+    <!-- Loading State -->
+    <div *ngIf="loading" class="flex items-center justify-center py-16">
+      <div class="text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
+          <mat-icon class="!text-primary-600 !text-4xl animate-spin">refresh</mat-icon>
+        </div>
+        <p class="text-gray-600 font-medium">Searching deliveries...</p>
+      </div>
+    </div>
+
+    <!-- No Results -->
+    <div *ngIf="!loading && deliveries.length === 0 && (trackForm.get('sku')?.value || trackForm.get('agent')?.value)" 
+         class="bg-white rounded-2xl shadow-card p-12 border border-gray-100 text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+        <mat-icon class="!text-gray-400 !text-4xl">search_off</mat-icon>
+      </div>
+      <h4 class="text-lg font-semibold text-gray-900 mb-2">No deliveries found</h4>
+      <p class="text-gray-600 mb-4">Try adjusting your search criteria or clear filters to see all deliveries</p>
+      <button mat-raised-button color="primary" (click)="clearSearch()" class="!rounded-lg">
+        Clear Search
+      </button>
+    </div>
+
+    <div *ngIf="!loading && deliveries.length === 0 && !trackForm.get('sku')?.value && !trackForm.get('agent')?.value" 
+         class="bg-white rounded-2xl shadow-card p-12 border border-gray-100 text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+        <mat-icon class="!text-gray-400 !text-4xl">local_shipping</mat-icon>
+      </div>
+      <h4 class="text-lg font-semibold text-gray-900 mb-2">No deliveries in system</h4>
+      <p class="text-gray-600">There are currently no deliveries to display</p>
+    </div>
+
+    <!-- Results Table -->
+    <div *ngIf="!loading && deliveries.length > 0" class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
+      <div class="p-6 border-b border-gray-200">
+        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <mat-icon class="!text-gray-600">list_alt</mat-icon>
+          Delivery Results
+          <span class="ml-2 px-3 py-1 bg-primary-100 text-primary-700 text-sm font-semibold rounded-full">
+            {{ deliveries.length }}
+          </span>
+        </h3>
+      </div>
+
+      <div class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">SKU</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Agent</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Created</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Items</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr *ngFor="let delivery of deliveries" class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="text-sm font-mono font-semibold text-primary-600">{{ getDeliverySkus(delivery.items) }}</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <div class="flex items-center gap-2">
+                  <div class="w-8 h-8 bg-gradient-to-br from-purple-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <mat-icon class="!text-white !text-sm">person</mat-icon>
+                  </div>
+                  <span class="text-sm font-medium text-gray-900">{{ delivery.deliveryAgent }}</span>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span [class]="'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ' + 
+                  (delivery.status === 'DELIVERED' ? 'bg-green-100 text-green-800' : 
+                   delivery.status === 'IN_TRANSIT' ? 'bg-blue-100 text-blue-800' : 
+                   delivery.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' : 
+                   delivery.status === 'CANCELLED' ? 'bg-gray-100 text-gray-800' : 
+                   delivery.status === 'RETURNED' ? 'bg-orange-100 text-orange-800' : 
+                   'bg-red-100 text-red-800')">
+                  {{ delivery.status.replace('_', ' ') }}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                {{ delivery.createdAt | date:'short' }}
+              </td>
+              <td class="px-6 py-4 text-sm text-gray-600">
+                {{ getItemSummary(delivery.items) }}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
-
-  <div *ngIf="!loading && deliveries.length === 0 && (trackForm.get('sku')?.value || trackForm.get('agent')?.value)" class="no-results">
-    No deliveries found matching your search criteria. Try adjusting your filters or clearing the search to see all deliveries.
-  </div>
-
-  <div *ngIf="!loading && deliveries.length === 0 && !trackForm.get('sku')?.value && !trackForm.get('agent')?.value" class="no-results">
-    No deliveries found in the system.
-  </div>
-
-  <mat-card *ngIf="!loading && deliveries.length > 0" class="results-card">
-    <mat-card-header>
-      <mat-card-title>Delivery Results ({{ deliveries.length }})</mat-card-title>
-    </mat-card-header>
-    <mat-card-content>
-      <table mat-table [dataSource]="deliveries" class="deliveries-table">
-        <ng-container matColumnDef="sku">
-          <th mat-header-cell *matHeaderCellDef>SKU</th>
-          <td mat-cell *matCellDef="let delivery">{{ getDeliverySkus(delivery.items) }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="agent">
-          <th mat-header-cell *matHeaderCellDef>Agent</th>
-          <td mat-cell *matCellDef="let delivery">{{ delivery.deliveryAgent }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="status">
-          <th mat-header-cell *matHeaderCellDef>Status</th>
-          <td mat-cell *matCellDef="let delivery">
-            <mat-chip [class]="getStatusClass(delivery.status)">
-              {{ delivery.status.replace('_', ' ') }}
-            </mat-chip>
-          </td>
-        </ng-container>
-
-        <ng-container matColumnDef="createdAt">
-          <th mat-header-cell *matHeaderCellDef>Created</th>
-          <td mat-cell *matCellDef="let delivery">{{ delivery.createdAt | date:'short' }}</td>
-        </ng-container>
-
-        <ng-container matColumnDef="items">
-          <th mat-header-cell *matHeaderCellDef>Items</th>
-          <td mat-cell *matCellDef="let delivery" class="items-cell">
-            {{ getItemSummary(delivery.items) }}
-          </td>
-        </ng-container>
-
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
-      </table>
-    </mat-card-content>
-  </mat-card>
 </div>

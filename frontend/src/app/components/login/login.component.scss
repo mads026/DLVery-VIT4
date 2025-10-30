@@ -1,172 +1,7 @@
-.login-container {
-  min-height: 100vh;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 20px;
-}
+// Modern login styles with Tailwind integration
+// Note: Tailwind is imported globally in styles.scss
 
-.login-card {
-  width: 100%;
-  max-width: 450px;
-}
-
-.login-mat-card {
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-}
-
-.login-title {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  font-size: 1.5rem;
-  font-weight: 600;
-  color: #333;
-}
-
-.login-icon {
-  font-size: 2rem;
-  color: #667eea;
-}
-
-.login-tabs {
-  margin-top: 1.5rem;
-}
-
-.tab-content {
-  padding: 1.5rem 0;
-}
-
-.full-width {
-  width: 100%;
-  margin-bottom: 1rem;
-  
-  .mat-mdc-form-field {
-    transition: all 0.3s ease;
-    
-    &:hover {
-      transform: translateY(-1px);
-    }
-    
-    &.mat-focused {
-      transform: translateY(-2px);
-      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    }
-  }
-  
-  input {
-    transition: all 0.2s ease;
-  }
-}
-
-.login-button {
-  width: 100%;
-  height: 48px;
-  font-size: 1rem;
-  font-weight: 500;
-  margin-top: 1rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  
-  &:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-  
-  .button-spinner {
-    margin-right: 0.5rem;
-  }
-  
-  &:disabled .button-spinner {
-    color: white;
-  }
-  
-  .button-text {
-    display: flex;
-    align-items: center;
-  }
-}
-
-.oauth-button {
-  width: 100%;
-  height: 48px;
-  font-size: 1rem;
-  font-weight: 500;
-  background-color: #4285f4;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  transition: all 0.3s ease;
-  
-  &:disabled {
-    opacity: 0.7;
-    cursor: not-allowed;
-  }
-  
-  .button-spinner {
-    color: white;
-  }
-  
-  .button-text {
-    display: flex;
-    align-items: center;
-  }
-}
-
-.oauth-button:hover:not(:disabled) {
-  background-color: #3367d6;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(66, 133, 244, 0.3);
-}
-
-.oauth-section {
-  text-align: center;
-  padding: 2rem 0;
-}
-
-.oauth-description {
-  margin-bottom: 2rem;
-  color: #666;
-  line-height: 1.5;
-}
-
-.oauth-note {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0.5rem;
-  margin-top: 1rem;
-  font-size: 0.875rem;
-  color: #666;
-  
-  .info-icon {
-    font-size: 1rem;
-    color: #2196f3;
-  }
-}
-
-.error-message {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  color: #f44336;
-  font-size: 0.875rem;
-  margin-bottom: 1rem;
-  padding: 0.75rem;
-  background-color: #ffebee;
-  border-radius: 8px;
-  border-left: 4px solid #f44336;
-  animation: slideIn 0.3s ease-out;
-}
-
+// Custom animations
 @keyframes slideIn {
   from {
     opacity: 0;
@@ -178,28 +13,66 @@
   }
 }
 
-.form-toggle {
-  text-align: center;
-  margin: 1.5rem 0;
-  
-  p {
-    color: #666;
-    font-size: 0.875rem;
-    margin: 0;
+// Material overrides for modern look
+::ng-deep {
+  .modern-tabs {
+    .mat-mdc-tab-labels {
+      border-bottom: 2px solid #e5e7eb;
+    }
+    
+    .mat-mdc-tab {
+      min-width: 160px;
+      
+      .mdc-tab__text-label {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-weight: 500;
+      }
+    }
+    
+    .mat-mdc-tab.mdc-tab--active {
+      .mdc-tab__text-label {
+        color: #0ea5e9;
+      }
+    }
   }
   
-  button {
-    font-weight: 500;
-    text-transform: none;
+  // Form field styling
+  .mat-mdc-form-field {
+    &.mat-focused {
+      .mat-mdc-form-field-focus-overlay {
+        opacity: 0;
+      }
+    }
+  }
+  
+  .mat-mdc-text-field-wrapper {
+    transition: all 0.3s ease;
+    
+    &:hover {
+      transform: translateY(-1px);
+    }
+  }
+  
+  // Button styling
+  .mat-mdc-raised-button {
+    transition: all 0.3s ease;
+    
+    &:hover:not(:disabled) {
+      transform: translateY(-2px);
+    }
+    
+    &:active:not(:disabled) {
+      transform: translateY(0);
+    }
   }
 }
 
-@media (max-width: 600px) {
-  .login-container {
-    padding: 10px;
-  }
-  
-  .login-mat-card {
-    padding: 1.5rem;
+// Responsive adjustments
+@media (max-width: 640px) {
+  ::ng-deep .modern-tabs .mat-mdc-tab {
+    min-width: 120px;
+    font-size: 0.875rem;
   }
 }

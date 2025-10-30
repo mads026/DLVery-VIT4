@@ -12,6 +12,7 @@ import { MatAutocompleteModule } from '@angular/material/autocomplete';
 import { Observable, startWith, map } from 'rxjs';
 import { InventoryService } from '../../services/inventory.service';
 import { Delivery, DeliveryStatus } from '../../models/delivery.model';
+import { ModernInputComponent } from '../../../shared/components/modern-input/modern-input.component';
 
 @Component({
   selector: 'app-track-product',
@@ -26,7 +27,8 @@ import { Delivery, DeliveryStatus } from '../../models/delivery.model';
     MatCardModule,
     MatIconModule,
     MatChipsModule,
-    MatAutocompleteModule
+    MatAutocompleteModule,
+    ModernInputComponent
   ],
   templateUrl: './track-product.html',
   styleUrl: './track-product.scss'

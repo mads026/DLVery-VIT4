@@ -1,118 +1,183 @@
-<div class="product-inventory-container">
-  <!-- Header -->
-  <div class="page-header">
-    <h1 class="page-title">Product Inventory</h1>
-  </div>
-
-  <!-- Controls Section -->
-  <div class="controls-section">
-    <div class="controls-left">
-      <button class="upload-btn" (click)="fileInput.click()">
-        Upload File
-      </button>
-      <input type="file" #fileInput (change)="onFileSelected($event)" accept=".csv,.xlsx" class="hidden">
-      
-      <button class="template-btn" (click)="downloadTemplate()">
-        Download Template
-      </button>
-      
-      <button class="add-product-btn" (click)="openProductForm()">
-        Add Product
-      </button>
-    </div>
-
-    <div class="controls-right">
-      <div class="search-container">
-        <input type="text" 
-               class="search-input" 
-               placeholder="Search products..."
-               [(ngModel)]="searchTerm"
-               (input)="onSearchChange()">
-      </div>
-      
-      <select class="category-select" [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
-        <option value="">All Categories</option>
-        <option *ngFor="let category of categories" [value]="category">
-          {{ category.replace('_', ' ') }}
-        </option>
-      </select>
-    </div>
-  </div>
-
-  <!-- Filter Checkboxes -->
-  <div class="filter-checkboxes">
-    <label class="checkbox-container">
-      <input type="checkbox" [(ngModel)]="showDamagedOnly" (change)="onDamagedFilterChange()">
-      <span class="checkmark"></span>
-      Damaged Only
-    </label>
-    
-    <label class="checkbox-container">
-      <input type="checkbox" [(ngModel)]="showPerishableOnly" (change)="onPerishableFilterChange()">
-      <span class="checkmark"></span>
-      Perishable Only
-    </label>
-  </div>
-
-  <!-- Products Table -->
-  <div class="table-container">
-    <div *ngIf="loading" class="loading-state">
-      <div class="loading-text">Loading products...</div>
-    </div>
-
-    <div *ngIf="!loading && filteredProducts.length === 0" class="no-products">
-      No products found matching your criteria.
-    </div>
-
-    <table *ngIf="!loading && filteredProducts.length > 0" class="products-table">
-      <thead>
-        <tr class="table-header">
-          <th class="col-sku">SKU</th>
-          <th class="col-name">Name</th>
-          <th class="col-category">Category</th>
-          <th class="col-quantity">Quantity</th>
-          <th class="col-price">Unit Price</th>
-          <th class="col-status">Status</th>
-          <th class="col-actions">Actions</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr *ngFor="let product of filteredProducts" class="table-row">
-          <td class="col-sku">
-            <span class="sku-text">{{ product.sku }}</span>
-          </td>
-          <td class="col-name">
-            <div class="product-info">
-              <div class="product-name">{{ product.name }}</div>
-              <div class="product-description" *ngIf="product.description">{{ product.description }}</div>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+  <!-- Modern Header -->
+  <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+              <mat-icon class="!text-white !text-2xl">inventory_2</mat-icon>
             </div>
-          </td>
-          <td class="col-category">
-            <span class="category-text">{{ product.category.replace('_', ' ') }}</span>
-          </td>
-          <td class="col-quantity">
-            <span class="quantity-text" [class.low-stock]="product.quantity < 10">
-              {{ product.quantity }}
-            </span>
-          </td>
-          <td class="col-price">
-            <span class="price-text">₹{{ product.unitPrice | number:'1.2-2' }}</span>
-          </td>
-          <td class="col-status">
-            <span class="status-badge" [ngClass]="getStatusClass(product)">
-              {{ getStatusText(product) }}
-            </span>
-          </td>
-          <td class="col-actions">
-            <button class="edit-btn" (click)="openProductForm(product)">
-              Edit
-            </button>
-            <button class="delete-btn" (click)="deleteProduct(product)">
-              Delete
-            </button>
-          </td>
-        </tr>
-      </tbody>
-    </table>
+            Product Inventory
+          </h1>
+          <p class="mt-2 text-sm text-gray-600">Manage your product catalog and inventory levels</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <!-- Controls Section -->
+    <div class="bg-white rounded-2xl shadow-card p-6 border border-gray-100">
+      <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+        <!-- Left Controls -->
+        <div class="flex flex-wrap gap-3">
+          <button 
+            class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-lg transition-all"
+            (click)="openProductForm()">
+            <mat-icon class="!text-lg">add</mat-icon>
+            Add Product
+          </button>
+          
+          <button 
+            class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all"
+            (click)="fileInput.click()">
+            <mat-icon class="!text-lg">upload_file</mat-icon>
+            Upload CSV
+          </button>
+          <input type="file" #fileInput (change)="onFileSelected($event)" accept=".csv,.xlsx" class="hidden">
+          
+          <button 
+            class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white font-medium rounded-xl hover:shadow-lg transition-all"
+            (click)="downloadTemplate()">
+            <mat-icon class="!text-lg">download</mat-icon>
+            Download Template
+          </button>
+        </div>
+
+        <!-- Right Controls -->
+        <div class="flex flex-col sm:flex-row gap-3">
+          <div class="relative">
+            <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 !text-gray-400 !text-lg">search</mat-icon>
+            <input 
+              type="text" 
+              class="w-full sm:w-64 pl-10 pr-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm"
+              placeholder="Search products..."
+              [(ngModel)]="searchTerm"
+              (input)="onSearchChange()">
+          </div>
+          
+          <select 
+            class="px-4 py-2.5 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-sm bg-white"
+            [(ngModel)]="selectedCategory" 
+            (change)="onCategoryChange()">
+            <option value="">All Categories</option>
+            <option *ngFor="let category of categories" [value]="category">
+              {{ category.replace('_', ' ') }}
+            </option>
+          </select>
+        </div>
+      </div>
+
+      
+      <!-- Filter Checkboxes -->
+      <div class="flex gap-6 mt-4 pt-4 border-t border-gray-200">
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input 
+            type="checkbox" 
+            class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+            [(ngModel)]="showDamagedOnly" 
+            (change)="onDamagedFilterChange()">
+          <span class="text-sm font-medium text-gray-700">Damaged Only</span>
+        </label>
+        
+        <label class="flex items-center gap-2 cursor-pointer">
+          <input 
+            type="checkbox" 
+            class="w-4 h-4 text-primary-600 border-gray-300 rounded focus:ring-primary-500"
+            [(ngModel)]="showPerishableOnly" 
+            (change)="onPerishableFilterChange()">
+          <span class="text-sm font-medium text-gray-700">Perishable Only</span>
+        </label>
+      </div>
+    </div>
+
+    <!-- Products Table -->
+    <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
+      <!-- Loading State -->
+      <div *ngIf="loading" class="flex items-center justify-center py-16">
+        <div class="text-center">
+          <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
+            <mat-icon class="!text-primary-600 !text-4xl animate-spin">refresh</mat-icon>
+          </div>
+          <p class="text-gray-600 font-medium">Loading products...</p>
+        </div>
+      </div>
+
+      <!-- No Products -->
+      <div *ngIf="!loading && filteredProducts.length === 0" class="p-12 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+          <mat-icon class="!text-gray-400 !text-4xl">inventory_2</mat-icon>
+        </div>
+        <h4 class="text-lg font-semibold text-gray-900 mb-2">No products found</h4>
+        <p class="text-gray-600 mb-4">Try adjusting your search or filters</p>
+      </div>
+
+      <!-- Table -->
+      <div *ngIf="!loading && filteredProducts.length > 0" class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">SKU</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Product Name</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Category</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantity</th>
+              <th class="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Unit Price</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr *ngFor="let product of filteredProducts" class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="text-sm font-mono font-semibold text-primary-600">{{ product.sku }}</span>
+              </td>
+              <td class="px-6 py-4">
+                <div class="flex flex-col">
+                  <span class="text-sm font-medium text-gray-900">{{ product.name }}</span>
+                  <span *ngIf="product.description" class="text-xs text-gray-500 mt-1">{{ product.description }}</span>
+                </div>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span class="text-sm text-gray-600">{{ product.category.replace('_', ' ') }}</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span [class]="'text-sm font-semibold ' + (product.quantity === 0 ? 'text-red-600' : product.quantity < 10 ? 'text-orange-600' : 'text-gray-900')">
+                  {{ product.quantity }}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-right">
+                <span class="text-sm font-semibold text-green-600">₹{{ product.unitPrice | number:'1.2-2' }}</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span [class]="'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ' + 
+                  (getStatusText(product) === 'In Stock' ? 'bg-green-100 text-green-800' : 
+                   getStatusText(product) === 'Low Stock' ? 'bg-orange-100 text-orange-800' : 
+                   getStatusText(product) === 'Out of Stock' ? 'bg-red-100 text-red-800' : 
+                   'bg-red-100 text-red-800')">
+                  {{ getStatusText(product) }}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-center">
+                <div class="flex items-center justify-center gap-2">
+                  <button 
+                    class="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
+                    (click)="openProductForm(product)">
+                    <mat-icon class="!text-base">edit</mat-icon>
+                    Edit
+                  </button>
+                  <button 
+                    class="inline-flex items-center gap-1 px-3 py-1.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                    (click)="deleteProduct(product)">
+                    <mat-icon class="!text-base">delete</mat-icon>
+                    Delete
+                  </button>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 </div>

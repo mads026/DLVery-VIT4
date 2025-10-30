@@ -1,93 +1,33 @@
-.track-product-container {
-  padding: 20px;
-  max-width: 1200px;
-  margin: 0 auto;
-}
+/* Track Product Component - Tailwind-based styling */
 
-.page-header {
-  margin-bottom: 24px;
-
-  .page-title {
-    font-size: 28px;
-    font-weight: 500;
-    color: #333;
-    margin: 0;
+/* Custom animations */
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
   }
 }
 
-.search-card {
-  margin-bottom: 24px;
-
-  .search-form {
-    .form-row {
-      display: flex;
-      gap: 16px;
-      align-items: center;
-      flex-wrap: wrap;
-
-      mat-form-field {
-        flex: 1;
-        min-width: 200px;
-      }
-
-      button {
-        height: 40px;
-        padding: 0 24px;
-      }
-    }
-  }
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 
-.loading-state, .no-results {
-  text-align: center;
-  padding: 40px;
-  color: #666;
-  font-size: 16px;
-}
-
-.results-card {
-  .deliveries-table {
+/* Material overrides */
+::ng-deep {
+  .mat-mdc-form-field {
     width: 100%;
-
-    .items-cell {
-      max-width: 300px;
-      word-wrap: break-word;
-    }
   }
-}
-
-// Status chip styles
-.status-delivered {
-  background-color: #4caf50 !important;
-  color: white !important;
-}
-
-.status-in-transit {
-  background-color: #2196f3 !important;
-  color: white !important;
-}
-
-.status-pending {
-  background-color: #ff9800 !important;
-  color: white !important;
-}
-
-.status-cancelled {
-  background-color: #f44336 !important;
-  color: white !important;
-}
-
-.status-returned {
-  background-color: #9c27b0 !important;
-  color: white !important;
-}
-
-.status-damaged {
-  background-color: #ff5722 !important;
-  color: white !important;
-}
-
-.status-default {
-  background-color: #9e9e9e !important;
-  color: white !important;
+  
+  .mat-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .mat-mdc-autocomplete-panel {
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+  }
 }

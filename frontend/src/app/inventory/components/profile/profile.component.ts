@@ -10,6 +10,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatDividerModule } from '@angular/material/divider';
 import { ProfileService } from '../../services/profile.service';
 import { InventoryProfile } from '../../models/profile.model';
+import { ModernInputComponent } from '../../../shared/components/modern-input/modern-input.component';
 
 @Component({
   selector: 'app-profile',
@@ -23,7 +24,8 @@ import { InventoryProfile } from '../../models/profile.model';
     MatButtonModule,
     MatIconModule,
     MatSnackBarModule,
-    MatDividerModule
+    MatDividerModule,
+    ModernInputComponent
   ],
   templateUrl: './profile.component.html',
   styleUrls: ['./profile.component.scss']

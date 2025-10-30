@@ -17,6 +17,8 @@ import { DeliveryFormComponent } from '../delivery-form/delivery-form.component'
 import { DeliveryStatusDialogComponent, DeliveryStatusUpdate } from '../delivery-status-dialog/delivery-status-dialog.component';
 import { SignatureViewDialogComponent } from '../signature-view-dialog/signature-view-dialog.component';
 import { StatusHelpers } from '../../utils/status-helpers.util';
+import { ModernInputComponent } from '../../../shared/components/modern-input/modern-input.component';
+import { ModernSelectComponent, SelectOption } from '../../../shared/components/modern-select/modern-select.component';
 
 @Component({
   selector: 'app-delivery-list',
@@ -31,7 +33,9 @@ import { StatusHelpers } from '../../utils/status-helpers.util';
     MatInputModule,
     MatSelectModule,
     MatCardModule,
-    MatMenuModule
+    MatMenuModule,
+    ModernInputComponent,
+    ModernSelectComponent
   ],
   templateUrl: './delivery-list.component.html',
   styleUrls: ['./delivery-list.component.css']
@@ -48,6 +52,27 @@ export class DeliveryListComponent implements OnInit {
   statuses = Object.values(DeliveryStatus);
   agents: string[] = [];
   DeliveryStatus = DeliveryStatus;
+
+  // Options for modern select components
+  get statusOptions(): SelectOption[] {
+    return [
+      { value: '', label: 'All Status' },
+      { value: 'PENDING', label: 'Pending' },
+      { value: 'IN_TRANSIT', label: 'In Transit' },
+      { value: 'DELIVERED', label: 'Delivered' },
+      { value: 'DOOR_LOCKED', label: 'Door Locked' },
+      { value: 'DAMAGED_IN_TRANSIT', label: 'Damaged' },
+      { value: 'RETURNED', label: 'Returned' },
+      { value: 'CANCELLED', label: 'Cancelled' }
+    ];
+  }
+
+  get agentOptions(): SelectOption[] {
+    return [
+      { value: '', label: 'All Agents' },
+      ...this.agents.map(agent => ({ value: agent, label: agent }))
+    ];
+  }
 
   constructor(
     private inventoryService: InventoryService,

@@ -1,0 +1,321 @@
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+  <!-- Modern Header -->
+  <div class="bg-gradient-to-r from-indigo-600 to-indigo-700 shadow-lg sticky top-0 z-50">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex items-center justify-between h-14">
+        <div class="flex items-center gap-2">
+          <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-lg">
+            <mat-icon class="!text-indigo-600 !text-xl">local_shipping</mat-icon>
+          </div>
+          <span class="text-white font-bold text-lg hidden sm:block">Delivery Agent</span>
+          <span class="hidden lg:block text-white/80 text-xs">Dashboard</span>
+        </div>
+        
+        <div class="flex items-center gap-1">
+          <button 
+            mat-icon-button 
+            (click)="refreshData()"
+            class="!text-white hover:!bg-white/10 !transition-all"
+            matTooltip="Refresh">
+            <mat-icon>refresh</mat-icon>
+          </button>
+          
+          <button 
+            mat-icon-button 
+            [matMenuTriggerFor]="profileMenu"
+            class="!text-white hover:!bg-white/10 !transition-all"
+            matTooltip="Account Menu">
+            <mat-icon>account_circle</mat-icon>
+          </button>
+        </div>
+
+        <!-- Profile Menu -->
+        <mat-menu #profileMenu="matMenu" class="!min-w-[280px]">
+          <div class="flex items-center gap-3 px-4 py-3 bg-gray-50 border-b border-gray-200">
+            <div class="w-10 h-10 bg-gradient-to-br from-indigo-500 to-indigo-600 rounded-full flex items-center justify-center">
+              <mat-icon class="!text-white !text-xl">account_circle</mat-icon>
+            </div>
+            <div class="flex flex-col">
+              <span class="text-sm font-semibold text-gray-900">{{ currentUser?.username || 'User' }}</span>
+              <span class="text-xs text-gray-600">{{ currentUser?.email || '' }}</span>
+            </div>
+          </div>
+          <button mat-menu-item (click)="openAccountSettings()" class="!h-12">
+            <mat-icon class="!text-gray-600">settings</mat-icon>
+            <span>Account Settings</span>
+          </button>
+          <button mat-menu-item (click)="logout()" class="!h-12">
+            <mat-icon class="!text-red-600">logout</mat-icon>
+            <span class="text-red-600">Logout</span>
+          </button>
+        </mat-menu>
+      </div>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="loading" class="flex items-center justify-center min-h-[400px]">
+    <div class="text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-indigo-100 rounded-full mb-4">
+        <mat-icon class="!text-indigo-600 !text-4xl animate-spin">refresh</mat-icon>
+      </div>
+      <p class="text-gray-600 font-medium">Loading delivery data...</p>
+    </div>
+  </div>
+
+  <!-- Dashboard Content -->
+  <div *ngIf="!loading" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    
+    <!-- KPI Cards -->
+    <section>
+      <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+        <mat-icon class="!text-gray-600">analytics</mat-icon>
+        Overview
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        
+        <!-- Today's Deliveries -->
+        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+              <mat-icon class="!text-white !text-2xl">today</mat-icon>
+            </div>
+            <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Today</span>
+          </div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-gray-600">Today's Deliveries</p>
+            <p class="text-3xl font-bold text-blue-600">{{ todaysDeliveries.length }}</p>
+            <p class="text-xs text-gray-500">Scheduled for today</p>
+          </div>
+        </div>
+
+        <!-- Pending -->
+        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
+              <mat-icon class="!text-white !text-2xl">schedule</mat-icon>
+            </div>
+            <span class="text-xs font-semibold text-yellow-600 bg-yellow-50 px-3 py-1 rounded-full">Pending</span>
+          </div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-gray-600">Pending</p>
+            <p class="text-3xl font-bold text-yellow-600">{{ pendingDeliveries.length }}</p>
+            <p class="text-xs text-gray-500">Awaiting action</p>
+          </div>
+        </div>
+
+        <!-- Delivered -->
+        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+              <mat-icon class="!text-white !text-2xl">check_circle</mat-icon>
+            </div>
+            <span class="text-xs font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">Success</span>
+          </div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-gray-600">Delivered</p>
+            <p class="text-3xl font-bold text-green-600">{{ deliveredDeliveries.length }}</p>
+            <p class="text-xs text-gray-500">Successfully completed</p>
+          </div>
+        </div>
+
+        <!-- Overdue -->
+        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+              <mat-icon class="!text-white !text-2xl">warning</mat-icon>
+            </div>
+            <span class="text-xs font-semibold text-red-600 bg-red-50 px-3 py-1 rounded-full">Alert</span>
+          </div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-gray-600">Overdue</p>
+            <p class="text-3xl font-bold text-red-600">{{ getOverdueCount() }}</p>
+            <p class="text-xs text-gray-500">Require attention</p>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- Filters Section -->
+    <div class="bg-white rounded-2xl shadow-card p-6 border border-gray-100">
+      <div class="mb-4">
+        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <mat-icon class="!text-gray-600">filter_list</mat-icon>
+          Search & Filters
+        </h3>
+        <p class="text-sm text-gray-600 mt-1">Filter deliveries by status and priority</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <app-modern-input
+          [(ngModel)]="searchTerm"
+          (valueChange)="applyFilters()"
+          placeholder="Search by ID, customer..."
+          prefixIcon="search"
+          [clearable]="true">
+        </app-modern-input>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Filter by Status</mat-label>
+          <mat-select 
+            [(value)]="selectedStatus" 
+            (selectionChange)="applyFilters()"
+            class="!text-sm">
+            <mat-option value="">All Statuses</mat-option>
+            <mat-option value="PENDING">Pending</mat-option>
+            <mat-option value="IN_TRANSIT">In Transit</mat-option>
+            <mat-option value="DELIVERED">Delivered</mat-option>
+            <mat-option value="DOOR_LOCKED">Door Locked</mat-option>
+            <mat-option value="DAMAGED_IN_TRANSIT">Damaged</mat-option>
+            <mat-option value="RETURNED">Returned</mat-option>
+          </mat-select>
+          <mat-icon matSuffix class="!text-gray-400">filter_alt</mat-icon>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="w-full">
+          <mat-label>Filter by Priority</mat-label>
+          <mat-select 
+            [(value)]="selectedPriority" 
+            (selectionChange)="applyFilters()"
+            class="!text-sm">
+            <mat-option value="">All Priorities</mat-option>
+            <mat-option value="EMERGENCY">🚨 Emergency</mat-option>
+            <mat-option value="PERISHABLE">🥛 Perishable</mat-option>
+            <mat-option value="ESSENTIAL">⚡ Essential</mat-option>
+            <mat-option value="STANDARD">📦 Standard</mat-option>
+            <mat-option value="LOW">📋 Low Priority</mat-option>
+          </mat-select>
+          <mat-icon matSuffix class="!text-gray-400">priority_high</mat-icon>
+        </mat-form-field>
+      </div>
+    </div>
+
+    <!-- Delivery Tabs -->
+    <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
+      <mat-tab-group class="modern-tabs" (selectedTabChange)="onTabChange($event)">
+        
+        <!-- Today's Deliveries Tab -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <div class="flex items-center gap-2">
+              <mat-icon>today</mat-icon>
+              <span>Today's Deliveries</span>
+              <span *ngIf="getFilteredTodaysDeliveries().length > 0" 
+                    class="ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 text-xs font-semibold rounded-full">
+                {{ getFilteredTodaysDeliveries().length }}
+              </span>
+            </div>
+          </ng-template>
+
+          <div class="p-6">
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold text-gray-900">Today's Deliveries ({{ getFilteredTodaysDeliveries().length }})</h3>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="getFilteredTodaysDeliveries().length === 0" class="text-center py-16">
+              <div class="inline-flex items-center justify-center w-16 h-16 bg-blue-100 rounded-full mb-4">
+                <mat-icon class="!text-blue-600 !text-4xl">today</mat-icon>
+              </div>
+              <h4 class="text-lg font-semibold text-gray-900 mb-2">No deliveries for today</h4>
+              <p class="text-gray-600">All caught up! Check pending deliveries or come back tomorrow.</p>
+            </div>
+
+            <!-- Delivery Grid -->
+            <div *ngIf="getFilteredTodaysDeliveries().length > 0" class="grid grid-cols-1 gap-4">
+              <div *ngFor="let delivery of getFilteredTodaysDeliveries()">
+                <app-delivery-card
+                  [delivery]="delivery"
+                  (statusUpdate)="onDeliveryUpdate($event)"
+                  (viewDetails)="onViewDetails($event)">
+                </app-delivery-card>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Pending Deliveries Tab -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <div class="flex items-center gap-2">
+              <mat-icon>schedule</mat-icon>
+              <span>Pending</span>
+              <span *ngIf="getFilteredPendingDeliveries().length > 0" 
+                    class="ml-2 px-2 py-0.5 bg-yellow-100 text-yellow-700 text-xs font-semibold rounded-full">
+                {{ getFilteredPendingDeliveries().length }}
+              </span>
+            </div>
+          </ng-template>
+
+          <div class="p-6">
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold text-gray-900">Pending Deliveries ({{ getFilteredPendingDeliveries().length }})</h3>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="getFilteredPendingDeliveries().length === 0" class="text-center py-16">
+              <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+                <mat-icon class="!text-green-600 !text-4xl">done_all</mat-icon>
+              </div>
+              <h4 class="text-lg font-semibold text-gray-900 mb-2">All caught up!</h4>
+              <p class="text-gray-600">No pending deliveries. Great work!</p>
+            </div>
+
+            <!-- Delivery Grid -->
+            <div *ngIf="getFilteredPendingDeliveries().length > 0" class="grid grid-cols-1 gap-4">
+              <div *ngFor="let delivery of getFilteredPendingDeliveries()">
+                <app-delivery-card
+                  [delivery]="delivery"
+                  (statusUpdate)="onDeliveryUpdate($event)"
+                  (viewDetails)="onViewDetails($event)">
+                </app-delivery-card>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+        <!-- Delivered Tab -->
+        <mat-tab>
+          <ng-template mat-tab-label>
+            <div class="flex items-center gap-2">
+              <mat-icon>check_circle</mat-icon>
+              <span>Delivered</span>
+              <span *ngIf="getFilteredDeliveredDeliveries().length > 0" 
+                    class="ml-2 px-2 py-0.5 bg-green-100 text-green-700 text-xs font-semibold rounded-full">
+                {{ getFilteredDeliveredDeliveries().length }}
+              </span>
+            </div>
+          </ng-template>
+
+          <div class="p-6">
+            <div class="mb-6">
+              <h3 class="text-lg font-semibold text-gray-900">Delivered Items ({{ getFilteredDeliveredDeliveries().length }})</h3>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="getFilteredDeliveredDeliveries().length === 0" class="text-center py-16">
+              <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+                <mat-icon class="!text-gray-400 !text-4xl">check_circle</mat-icon>
+              </div>
+              <h4 class="text-lg font-semibold text-gray-900 mb-2">No delivered items yet</h4>
+              <p class="text-gray-600">Completed deliveries will appear here.</p>
+            </div>
+
+            <!-- Delivery Grid -->
+            <div *ngIf="getFilteredDeliveredDeliveries().length > 0" class="grid grid-cols-1 gap-4">
+              <div *ngFor="let delivery of getFilteredDeliveredDeliveries()">
+                <app-delivery-card
+                  [delivery]="delivery"
+                  [isDelivered]="true"
+                  (viewDetails)="onViewDetails($event)">
+                </app-delivery-card>
+              </div>
+            </div>
+          </div>
+        </mat-tab>
+
+      </mat-tab-group>
+    </div>
+  </div>
+</div>

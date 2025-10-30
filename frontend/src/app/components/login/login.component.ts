@@ -12,6 +12,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { AuthService, LoginRequest, RegisterRequest, AuthResponse } from '../../services/auth.service';
 import { ValidationService } from '../../services/validation.service';
 import { PasswordStrengthComponent } from '../password-strength/password-strength.component';
+import { ModernInputComponent } from '../../shared/components/modern-input/modern-input.component';
 
 @Component({
   selector: 'app-login',
@@ -28,7 +29,8 @@ import { PasswordStrengthComponent } from '../password-strength/password-strengt
     MatTabsModule,
     MatIconModule,
     MatProgressSpinnerModule,
-    PasswordStrengthComponent
+    PasswordStrengthComponent,
+    ModernInputComponent
   ],
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']

@@ -1,77 +1,88 @@
-<div class="login-container">
-  <div class="login-card">
-    <mat-card class="login-mat-card">
-      <mat-card-header>
-        <mat-card-title class="login-title">
-          <mat-icon class="login-icon">local_shipping</mat-icon>
-          DIVery Login
+<div class="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary-600 via-primary-700 to-secondary-600 p-4">
+  <div class="w-full max-w-md">
+    <!-- Logo and Brand -->
+    <div class="text-center mb-8">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-white rounded-2xl shadow-lg mb-4">
+        <mat-icon class="text-primary-600 !text-4xl !w-10 !h-10">local_shipping</mat-icon>
+      </div>
+      <h1 class="text-4xl font-bold text-white mb-2">DIVery</h1>
+      <p class="text-primary-100">Logistics Management System</p>
+    </div>
+
+    <mat-card class="!rounded-2xl !shadow-2xl overflow-hidden">
+      <mat-card-header class="!bg-gradient-to-r !from-primary-50 !to-secondary-50 !p-6">
+        <mat-card-title class="!text-2xl !font-bold !text-gray-800 !mb-1">
+          Welcome Back
         </mat-card-title>
-        <mat-card-subtitle>Choose your login method</mat-card-subtitle>
+        <mat-card-subtitle class="!text-gray-600">Sign in to continue to your dashboard</mat-card-subtitle>
       </mat-card-header>
 
-      <mat-card-content>
-        <mat-tab-group class="login-tabs">
+      <mat-card-content class="!p-6">
+        <mat-tab-group class="modern-tabs">
           <!-- Inventory Team Login -->
-          <mat-tab label="Inventory Team">
-            <div class="tab-content">
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="mr-2">inventory_2</mat-icon>
+              Inventory Team
+            </ng-template>
+            <div class="py-6">
               <!-- Login Form -->
               <div *ngIf="!showRegisterForm">
-                <form [formGroup]="loginForm" (ngSubmit)="onInventoryLogin()">
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Username</mat-label>
-                    <input
-                      matInput
-                      formControlName="username"
-                      autocomplete="username">
-                    <mat-icon matSuffix>person</mat-icon>
-                    <mat-error *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched">
-                      <span *ngIf="loginForm.get('username')?.errors?.['required']">Username is required</span>
-                      <span *ngIf="loginForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters</span>
-                    </mat-error>
-                  </mat-form-field>
+                <form [formGroup]="loginForm" (ngSubmit)="onInventoryLogin()" class="space-y-5">
+                  <app-modern-input
+                    label="Username"
+                    placeholder="Enter your username"
+                    prefixIcon="person"
+                    [required]="true"
+                    formControlName="username"
+                    [error]="loginForm.get('username')?.invalid && loginForm.get('username')?.touched ? 
+                      (loginForm.get('username')?.errors?.['required'] ? 'Username is required' : 
+                       loginForm.get('username')?.errors?.['minlength'] ? 'Username must be at least 3 characters' : '') : ''">
+                  </app-modern-input>
 
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Password</mat-label>
-                    <input
-                      matInput
-                      [type]="hidePassword ? 'password' : 'text'"
-                      formControlName="password"
-                      autocomplete="current-password">
-                    <button
-                      mat-icon-button
-                      matSuffix
-                      type="button"
-                      (click)="togglePasswordVisibility()"
-                      [attr.aria-label]="'Hide password'"
-                      [attr.aria-pressed]="!hidePassword">
-                      <mat-icon>{{hidePassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                  <app-modern-input
+                    label="Password"
+                    [type]="hidePassword ? 'password' : 'text'"
+                    placeholder="Enter your password"
+                    prefixIcon="lock"
+                    [required]="true"
+                    formControlName="password"
+                    [error]="loginForm.get('password')?.invalid && loginForm.get('password')?.touched ? 
+                      (loginForm.get('password')?.errors?.['required'] ? 'Password is required' : 
+                       loginForm.get('password')?.errors?.['minlength'] ? 'Password must be at least 6 characters' : '') : ''">
+                  </app-modern-input>
+                  
+                  <div class="flex items-center justify-end -mt-2">
+                    <button 
+                      type="button" 
+                      class="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                      (click)="togglePasswordVisibility()">
+                      <mat-icon class="!text-sm !w-4 !h-4 align-middle mr-1">{{hidePassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                      {{hidePassword ? 'Show' : 'Hide'}} password
                     </button>
-                    <mat-error *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched">
-                      <span *ngIf="loginForm.get('password')?.errors?.['required']">Password is required</span>
-                      <span *ngIf="loginForm.get('password')?.errors?.['minlength']">Password must be at least 6 characters</span>
-                    </mat-error>
-                  </mat-form-field>
+                  </div>
 
-                  <div class="error-message" *ngIf="errorMessage">
-                    <mat-icon>error</mat-icon>
-                    {{ errorMessage }}
+                  <div class="flex items-center gap-3 p-4 bg-danger-50 border-l-4 border-danger-500 rounded-lg" *ngIf="errorMessage">
+                    <mat-icon class="!text-danger-600">error</mat-icon>
+                    <span class="text-sm text-danger-700">{{ errorMessage }}</span>
                   </div>
 
                   <button
                     mat-raised-button
                     color="primary"
                     type="submit"
-                    class="login-button"
+                    class="!w-full !h-12 !text-base !font-semibold !rounded-lg !shadow-lg hover:!shadow-xl !transition-all"
                     [disabled]="loading || loginForm.invalid">
-                    <mat-spinner *ngIf="loading" diameter="20" class="button-spinner"></mat-spinner>
-                    <mat-icon *ngIf="!loading">login</mat-icon>
-                    <span class="button-text">{{ loading ? 'Signing In...' : 'Sign In' }}</span>
+                    <mat-spinner *ngIf="loading" diameter="20" class="!mr-2"></mat-spinner>
+                    <mat-icon *ngIf="!loading" class="!mr-2">login</mat-icon>
+                    <span>{{ loading ? 'Signing In...' : 'Sign In' }}</span>
                   </button>
                 </form>
 
-                <div class="form-toggle">
-                  <p>Don't have an account?
-                    <button mat-button color="primary" (click)="toggleForm()" type="button">
+                <div class="text-center mt-6 pt-6 border-t border-gray-200">
+                  <p class="text-sm text-gray-600">
+                    Don't have an account?
+                    <button mat-button color="primary" (click)="toggleForm()" type="button" class="!font-semibold">
                       Register here
                     </button>
                   </p>
@@ -81,68 +92,52 @@
 
               <!-- Registration Form -->
               <div *ngIf="showRegisterForm">
-                <form [formGroup]="registerForm" (ngSubmit)="onInventoryRegister()">
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Full Name</mat-label>
-                    <input
-                      matInput
-                      formControlName="fullName"
-                      autocomplete="name">
-                    <mat-icon matSuffix>badge</mat-icon>
-                    <mat-error *ngIf="registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched">
-                      <span *ngIf="registerForm.get('fullName')?.errors?.['required']">Full name is required</span>
-                    </mat-error>
-                  </mat-form-field>
+                <form [formGroup]="registerForm" (ngSubmit)="onInventoryRegister()" class="space-y-5">
+                  <app-modern-input
+                    label="Full Name"
+                    placeholder="Enter your full name"
+                    prefixIcon="badge"
+                    [required]="true"
+                    formControlName="fullName"
+                    [error]="registerForm.get('fullName')?.invalid && registerForm.get('fullName')?.touched ? 
+                      (registerForm.get('fullName')?.errors?.['required'] ? 'Full name is required' : '') : ''">
+                  </app-modern-input>
 
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Username</mat-label>
-                    <input
-                      matInput
-                      formControlName="username"
-                      autocomplete="username">
-                    <mat-icon matSuffix>person</mat-icon>
-                    <mat-error *ngIf="registerForm.get('username')?.invalid && registerForm.get('username')?.touched">
-                      <span *ngIf="registerForm.get('username')?.errors?.['required']">Username is required</span>
-                      <span *ngIf="registerForm.get('username')?.errors?.['minlength']">Username must be at least 3 characters</span>
-                    </mat-error>
-                  </mat-form-field>
+                  <app-modern-input
+                    label="Username"
+                    placeholder="Choose a username"
+                    prefixIcon="person"
+                    [required]="true"
+                    formControlName="username"
+                    [error]="registerForm.get('username')?.invalid && registerForm.get('username')?.touched ? 
+                      (registerForm.get('username')?.errors?.['required'] ? 'Username is required' : 
+                       registerForm.get('username')?.errors?.['minlength'] ? 'Username must be at least 3 characters' : '') : ''">
+                  </app-modern-input>
 
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Email</mat-label>
-                    <input
-                      matInput
-                      type="email"
-                      formControlName="email"
-                      autocomplete="email">
-                    <mat-icon matSuffix>email</mat-icon>
-                    <mat-error *ngIf="registerForm.get('email')?.invalid && registerForm.get('email')?.touched">
-                      <span *ngIf="registerForm.get('email')?.errors?.['required']">Email is required</span>
-                      <span *ngIf="registerForm.get('email')?.errors?.['email']">Please enter a valid email</span>
-                    </mat-error>
-                  </mat-form-field>
+                  <app-modern-input
+                    label="Email"
+                    type="email"
+                    placeholder="Enter your email"
+                    prefixIcon="email"
+                    [required]="true"
+                    formControlName="email"
+                    [error]="registerForm.get('email')?.invalid && registerForm.get('email')?.touched ? 
+                      (registerForm.get('email')?.errors?.['required'] ? 'Email is required' : 
+                       registerForm.get('email')?.errors?.['email'] ? 'Please enter a valid email' : '') : ''">
+                  </app-modern-input>
 
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Password</mat-label>
-                    <input
-                      matInput
-                      [type]="hidePassword ? 'password' : 'text'"
-                      formControlName="password"
-                      autocomplete="new-password"
-                      (input)="onPasswordChange()">
-                    <button
-                      mat-icon-button
-                      matSuffix
-                      type="button"
-                      (click)="togglePasswordVisibility()"
-                      [attr.aria-label]="'Hide password'"
-                      [attr.aria-pressed]="!hidePassword">
-                      <mat-icon>{{hidePassword ? 'visibility' : 'visibility_off'}}</mat-icon>
-                    </button>
-                    <mat-error *ngIf="registerForm.get('password')?.invalid && registerForm.get('password')?.touched">
-                      <span *ngIf="registerForm.get('password')?.errors?.['required']">Password is required</span>
-                      <span *ngIf="registerForm.get('password')?.errors?.['minlength']">Password must be at least 8 characters</span>
-                    </mat-error>
-                  </mat-form-field>
+                  <app-modern-input
+                    label="Password"
+                    [type]="hidePassword ? 'password' : 'text'"
+                    placeholder="Create a password"
+                    prefixIcon="lock"
+                    [required]="true"
+                    formControlName="password"
+                    (valueChange)="onPasswordChange()"
+                    [error]="registerForm.get('password')?.invalid && registerForm.get('password')?.touched ? 
+                      (registerForm.get('password')?.errors?.['required'] ? 'Password is required' : 
+                       registerForm.get('password')?.errors?.['minlength'] ? 'Password must be at least 8 characters' : '') : ''">
+                  </app-modern-input>
 
                   <!-- Password Strength Indicator -->
                   <app-password-strength
@@ -150,50 +145,49 @@
                     [showRequirements]="true">
                   </app-password-strength>
 
-                  <mat-form-field appearance="outline" class="full-width">
-                    <mat-label>Confirm Password</mat-label>
-                    <input
-                      matInput
-                      [type]="hideConfirmPassword ? 'password' : 'text'"
-                      formControlName="confirmPassword"
-                      autocomplete="new-password">
-                    <button
-                      mat-icon-button
-                      matSuffix
-                      type="button"
-                      (click)="toggleConfirmPasswordVisibility()"
-                      [attr.aria-label]="'Hide confirm password'"
-                      [attr.aria-pressed]="!hideConfirmPassword">
-                      <mat-icon>{{hideConfirmPassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                  <app-modern-input
+                    label="Confirm Password"
+                    [type]="hideConfirmPassword ? 'password' : 'text'"
+                    placeholder="Confirm your password"
+                    prefixIcon="lock"
+                    [required]="true"
+                    formControlName="confirmPassword"
+                    [error]="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched ? 
+                      (registerForm.get('confirmPassword')?.errors?.['required'] ? 'Please confirm your password' : '') : 
+                      (registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched ? 'Passwords do not match' : '')">
+                  </app-modern-input>
+                  
+                  <div class="flex items-center justify-end -mt-2">
+                    <button 
+                      type="button" 
+                      class="text-sm text-primary-600 hover:text-primary-700 font-medium"
+                      (click)="togglePasswordVisibility()">
+                      <mat-icon class="!text-sm !w-4 !h-4 align-middle mr-1">{{hidePassword ? 'visibility' : 'visibility_off'}}</mat-icon>
+                      {{hidePassword ? 'Show' : 'Hide'}} passwords
                     </button>
-                    <mat-error *ngIf="registerForm.get('confirmPassword')?.invalid && registerForm.get('confirmPassword')?.touched">
-                      <span *ngIf="registerForm.get('confirmPassword')?.errors?.['required']">Please confirm your password</span>
-                    </mat-error>
-                    <mat-error *ngIf="registerForm.errors?.['passwordMismatch'] && registerForm.get('confirmPassword')?.touched">
-                      Passwords do not match
-                    </mat-error>
-                  </mat-form-field>
+                  </div>
 
-                  <div class="error-message" *ngIf="errorMessage">
-                    <mat-icon>error</mat-icon>
-                    {{ errorMessage }}
+                  <div class="flex items-center gap-3 p-4 bg-danger-50 border-l-4 border-danger-500 rounded-lg" *ngIf="errorMessage">
+                    <mat-icon class="!text-danger-600">error</mat-icon>
+                    <span class="text-sm text-danger-700">{{ errorMessage }}</span>
                   </div>
 
                   <button
                     mat-raised-button
                     color="primary"
                     type="submit"
-                    class="login-button"
+                    class="!w-full !h-12 !text-base !font-semibold !rounded-lg !shadow-lg hover:!shadow-xl !transition-all !mt-6"
                     [disabled]="loading || registerForm.invalid">
-                    <mat-spinner *ngIf="loading" diameter="20" class="button-spinner"></mat-spinner>
-                    <mat-icon *ngIf="!loading">person_add</mat-icon>
-                    <span class="button-text">{{ loading ? 'Creating Account...' : 'Create Account' }}</span>
+                    <mat-spinner *ngIf="loading" diameter="20" class="!mr-2"></mat-spinner>
+                    <mat-icon *ngIf="!loading" class="!mr-2">person_add</mat-icon>
+                    <span>{{ loading ? 'Creating Account...' : 'Create Account' }}</span>
                   </button>
                 </form>
 
-                <div class="form-toggle">
-                  <p>Already have an account?
-                    <button mat-button color="primary" (click)="toggleForm()" type="button">
+                <div class="text-center mt-6 pt-6 border-t border-gray-200">
+                  <p class="text-sm text-gray-600">
+                    Already have an account?
+                    <button mat-button color="primary" (click)="toggleForm()" type="button" class="!font-semibold">
                       Sign in here
                     </button>
                   </p>
@@ -203,28 +197,40 @@
           </mat-tab>
 
           <!-- Delivery Team Login -->
-          <mat-tab label="Delivery Team">
-            <div class="tab-content">
-              <div class="oauth-section">
-                <p class="oauth-description">
-                  Delivery team members use Google OAuth for secure authentication
-                </p>
+          <mat-tab>
+            <ng-template mat-tab-label>
+              <mat-icon class="mr-2">local_shipping</mat-icon>
+              Delivery Team
+            </ng-template>
+            <div class="py-6">
+              <div class="text-center space-y-6">
+                <div class="flex justify-center">
+                  <div class="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center shadow-lg">
+                    <mat-icon class="!text-white !text-5xl !w-12 !h-12">account_circle</mat-icon>
+                  </div>
+                </div>
+                
+                <div>
+                  <h3 class="text-lg font-semibold text-gray-800 mb-2">Google Authentication</h3>
+                  <p class="text-sm text-gray-600 max-w-sm mx-auto">
+                    Delivery team members use Google OAuth for secure and convenient authentication
+                  </p>
+                </div>
 
                 <button
                   mat-raised-button
-                  color="accent"
                   (click)="onDeliveryLogin()"
-                  class="oauth-button"
+                  class="!w-full !h-12 !bg-blue-600 hover:!bg-blue-700 !text-white !text-base !font-semibold !rounded-lg !shadow-lg hover:!shadow-xl !transition-all"
                   [disabled]="loading">
-                  <mat-spinner *ngIf="loading" diameter="20" class="button-spinner"></mat-spinner>
-                  <mat-icon *ngIf="!loading">account_circle</mat-icon>
-                  <span class="button-text">{{ loading ? 'Redirecting...' : 'Sign in with Google' }}</span>
+                  <mat-spinner *ngIf="loading" diameter="20" class="!mr-2 !text-white"></mat-spinner>
+                  <mat-icon *ngIf="!loading" class="!mr-2">account_circle</mat-icon>
+                  <span>{{ loading ? 'Redirecting...' : 'Sign in with Google' }}</span>
                 </button>
 
-                <p class="oauth-note">
-                  <mat-icon class="info-icon">info</mat-icon>
-                  You'll be redirected to Google for secure authentication
-                </p>
+                <div class="flex items-center justify-center gap-2 text-xs text-gray-500 bg-blue-50 p-3 rounded-lg">
+                  <mat-icon class="!text-blue-600 !text-base">info</mat-icon>
+                  <span>You'll be redirected to Google for secure authentication</span>
+                </div>
               </div>
             </div>
           </mat-tab>

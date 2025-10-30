@@ -1,263 +1,313 @@
-<div class="dashboard-container">
-  <!-- Header Section -->
-  <div class="dashboard-header">
-    <div class="header-content">
-      <div class="header-text">
-        <h1 class="dashboard-title">Inventory Dashboard</h1>
-        <p class="dashboard-subtitle">Monitor your inventory and delivery operations</p>
-      </div>
-      <div class="header-actions">
-        <button mat-fab color="primary" routerLink="/inventory/products" matTooltip="Add Product">
-          <mat-icon>add</mat-icon>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+  <!-- Modern Header -->
+  <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
+              <mat-icon class="!text-white !text-2xl">dashboard</mat-icon>
+            </div>
+            Inventory Dashboard
+          </h1>
+          <p class="mt-2 text-sm text-gray-600">Monitor your inventory and delivery operations in real-time</p>
+        </div>
+        <button 
+          mat-fab 
+          extended
+          class="!bg-gradient-to-r !from-primary-600 !to-primary-700 !text-white !shadow-lg hover:!shadow-xl !transition-all"
+          routerLink="/inventory/products" 
+          matTooltip="Add New Product">
+          <mat-icon class="!mr-2">add</mat-icon>
+          Add Product
         </button>
       </div>
     </div>
   </div>
 
   <!-- Loading State -->
-  <div *ngIf="loading" class="loading-container">
-    <div class="loading-spinner">
-      <mat-icon class="spin">refresh</mat-icon>
+  <div *ngIf="loading" class="flex items-center justify-center min-h-[400px]">
+    <div class="text-center">
+      <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
+        <mat-icon class="!text-primary-600 !text-4xl animate-spin">refresh</mat-icon>
+      </div>
+      <p class="text-gray-600 font-medium">Loading dashboard data...</p>
     </div>
-    <p class="loading-text">Loading dashboard data...</p>
   </div>
 
   <!-- Dashboard Content -->
-  <div *ngIf="!loading" class="dashboard-content">
+  <div *ngIf="!loading" class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
     
-    <!-- Key Performance Indicators -->
-    <section class="kpi-section">
-      <h2 class="section-title">Overview</h2>
-      <div class="kpi-grid">
+    <!-- KPI Cards Grid -->
+    <section>
+      <h2 class="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
+        <mat-icon class="!text-gray-600">analytics</mat-icon>
+        Key Metrics
+      </h2>
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         
-        <!-- Total Products Card -->
-        <div class="kpi-card total-products">
-          <div class="kpi-header">
-            <div class="kpi-title">
-              <mat-icon>inventory_2</mat-icon>
-              <span>Total Products</span>
+        <!-- Total Products -->
+        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
+              <mat-icon class="!text-white !text-2xl">inventory_2</mat-icon>
             </div>
+            <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Active</span>
           </div>
-          <div class="kpi-main">
-            <div class="kpi-value">{{ calculateTotalProducts() }}</div>
-            <div class="kpi-subtitle">Active inventory items</div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-gray-600">Total Products</p>
+            <p class="text-3xl font-bold text-gray-900">{{ calculateTotalProducts() }}</p>
+            <p class="text-xs text-gray-500">Active inventory items</p>
           </div>
         </div>
 
-        <!-- Total Value Card -->
-        <div class="kpi-card total-value">
-          <div class="kpi-header">
-            <div class="kpi-title">
-              <mat-icon>attach_money</mat-icon>
-              <span>Total Value</span>
+        <!-- Total Value -->
+        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
+              <mat-icon class="!text-white !text-2xl">account_balance_wallet</mat-icon>
             </div>
+            <span class="text-xs font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">Value</span>
           </div>
-          <div class="kpi-main">
-            <div class="kpi-value">₹{{ calculateTotalValue() | number:'1.2-2' }}</div>
-            <div class="kpi-subtitle">Current inventory value</div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-gray-600">Total Value</p>
+            <p class="text-3xl font-bold text-gray-900">₹{{ calculateTotalValue() | number:'1.0-0' }}</p>
+            <p class="text-xs text-gray-500">Current inventory value</p>
           </div>
         </div>
 
-        <!-- Damaged Items Card -->
-        <div class="kpi-card damaged-items">
-          <div class="kpi-header">
-            <div class="kpi-title">
-              <mat-icon>warning</mat-icon>
-              <span>Damaged Items</span>
+        <!-- Damaged Items -->
+        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
+              <mat-icon class="!text-white !text-2xl">warning</mat-icon>
             </div>
+            <span class="text-xs font-semibold text-red-600 bg-red-50 px-3 py-1 rounded-full">Alert</span>
           </div>
-          <div class="kpi-main">
-            <div class="kpi-value damaged">{{ calculateDamagedProducts() }}</div>
-            <div class="kpi-subtitle">Require attention</div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-gray-600">Damaged Items</p>
+            <p class="text-3xl font-bold text-red-600">{{ calculateDamagedProducts() }}</p>
+            <p class="text-xs text-gray-500">Require attention</p>
           </div>
         </div>
 
-        <!-- Expiring Soon Card -->
-        <div class="kpi-card expiring-soon">
-          <div class="kpi-header">
-            <div class="kpi-title">
-              <mat-icon>schedule</mat-icon>
-              <span>Expiring Soon</span>
+        <!-- Expiring Soon -->
+        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
+              <mat-icon class="!text-white !text-2xl">schedule</mat-icon>
             </div>
+            <span class="text-xs font-semibold text-orange-600 bg-orange-50 px-3 py-1 rounded-full">Urgent</span>
           </div>
-          <div class="kpi-main">
-            <div class="kpi-value warning">{{ calculateExpiringProducts() }}</div>
-            <div class="kpi-subtitle">Within 7 days</div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-gray-600">Expiring Soon</p>
+            <p class="text-3xl font-bold text-orange-600">{{ calculateExpiringProducts() }}</p>
+            <p class="text-xs text-gray-500">Within 7 days</p>
           </div>
         </div>
 
-        <!-- Pending Deliveries Card -->
-        <div class="kpi-card pending-deliveries">
-          <div class="kpi-header">
-            <div class="kpi-title">
-              <mat-icon>local_shipping</mat-icon>
-              <span>Pending Deliveries</span>
+        <!-- Pending Deliveries -->
+        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
+              <mat-icon class="!text-white !text-2xl">local_shipping</mat-icon>
             </div>
+            <span class="text-xs font-semibold text-purple-600 bg-purple-50 px-3 py-1 rounded-full">Pending</span>
           </div>
-          <div class="kpi-main">
-            <div class="kpi-value pending">{{ calculatePendingDeliveries() }}</div>
-            <div class="kpi-subtitle">Awaiting dispatch</div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-gray-600">Pending Deliveries</p>
+            <p class="text-3xl font-bold text-purple-600">{{ calculatePendingDeliveries() }}</p>
+            <p class="text-xs text-gray-500">Awaiting dispatch</p>
           </div>
         </div>
 
-        <!-- Successful Deliveries Card -->
-        <div class="kpi-card successful-deliveries">
-          <div class="kpi-header">
-            <div class="kpi-title">
-              <mat-icon>check_circle</mat-icon>
-              <span>Successful Deliveries</span>
+        <!-- Successful Deliveries -->
+        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
+          <div class="flex items-center justify-between mb-4">
+            <div class="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center">
+              <mat-icon class="!text-white !text-2xl">check_circle</mat-icon>
             </div>
+            <span class="text-xs font-semibold text-teal-600 bg-teal-50 px-3 py-1 rounded-full">Success</span>
           </div>
-          <div class="kpi-main">
-            <div class="kpi-value success">{{ calculateSuccessfulDeliveries() }}</div>
-            <div class="kpi-subtitle">Successfully delivered</div>
+          <div class="space-y-1">
+            <p class="text-sm font-medium text-gray-600">Successful Deliveries</p>
+            <p class="text-3xl font-bold text-teal-600">{{ calculateSuccessfulDeliveries() }}</p>
+            <p class="text-xs text-gray-500">Successfully delivered</p>
           </div>
         </div>
 
       </div>
     </section>
 
-    <!-- Inventory Search & Filters -->
-    <section class="search-section">
-      <div class="search-card">
-        <div class="search-header">
-          <h3 class="search-title">Inventory Search & Filters</h3>
-          <p class="search-subtitle">Find and filter your inventory items</p>
+    <!-- Search & Filters -->
+    <section class="bg-white rounded-2xl shadow-card p-6 border border-gray-100">
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <mat-icon class="!text-gray-600">filter_list</mat-icon>
+          Search & Filters
+        </h3>
+        <p class="text-sm text-gray-600 mt-1">Find and filter your inventory items</p>
+      </div>
+      
+      <div class="space-y-4">
+        <!-- Search Input -->
+        <div class="relative">
+          <mat-icon class="absolute left-4 top-1/2 -translate-y-1/2 !text-gray-400">search</mat-icon>
+          <input 
+            type="text" 
+            class="w-full pl-12 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-gray-900 placeholder-gray-400"
+            placeholder="Search by product name, SKU, or category..."
+            [(ngModel)]="searchTerm"
+            (input)="onSearchChange()">
+          <button 
+            *ngIf="searchTerm" 
+            class="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+            (click)="searchTerm = ''; onSearchChange()"
+            matTooltip="Clear search">
+            <mat-icon>close</mat-icon>
+          </button>
         </div>
-        <div class="search-controls">
-          <div class="search-input-group">
-            <mat-icon class="search-icon">search</mat-icon>
-            <input type="text" 
-                   class="search-input" 
-                   placeholder="Search by product name, SKU, or category..."
-                   [(ngModel)]="searchTerm"
-                   (input)="onSearchChange()">
-            <button *ngIf="searchTerm" 
-                    class="clear-search-btn" 
-                    (click)="searchTerm = ''; onSearchChange()"
-                    matTooltip="Clear search">
-              <mat-icon>close</mat-icon>
-            </button>
-          </div>
-          <div class="filter-group">
-            <select class="filter-select" [(ngModel)]="selectedCategory" (change)="onCategoryChange()">
-              <option value="">All Categories</option>
-              <option *ngFor="let category of availableCategories" [value]="category">
-                {{ category }}
-              </option>
-            </select>
-            <select class="filter-select" [(ngModel)]="selectedStatus" (change)="onStatusChange()">
-              <option value="">All Status</option>
-              <option value="good">Good</option>
-              <option value="damaged">Damaged / Out of Stock</option>
-              <option value="expiring">Expiring Soon</option>
-            </select>
-            <button class="clear-filters-btn" 
-                    (click)="clearFilters()"
-                    [disabled]="!searchTerm && !selectedCategory && !selectedStatus"
-                    matTooltip="Clear all filters">
-              <mat-icon>filter_list_off</mat-icon>
-              Clear Filters
-            </button>
-          </div>
+
+        <!-- Filter Dropdowns -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <select 
+            class="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-gray-900 bg-white"
+            [(ngModel)]="selectedCategory" 
+            (change)="onCategoryChange()">
+            <option value="">All Categories</option>
+            <option *ngFor="let category of availableCategories" [value]="category">
+              {{ category }}
+            </option>
+          </select>
+
+          <select 
+            class="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all text-gray-900 bg-white"
+            [(ngModel)]="selectedStatus" 
+            (change)="onStatusChange()">
+            <option value="">All Status</option>
+            <option value="good">Good</option>
+            <option value="damaged">Damaged / Out of Stock</option>
+            <option value="expiring">Expiring Soon</option>
+          </select>
+
+          <button 
+            class="px-6 py-3 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-xl transition-all flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            (click)="clearFilters()"
+            [disabled]="!searchTerm && !selectedCategory && !selectedStatus">
+            <mat-icon>filter_list_off</mat-icon>
+            Clear Filters
+          </button>
         </div>
       </div>
     </section>
 
-    <!-- Current Inventory Table -->
-    <section class="inventory-table-section">
-      <div class="inventory-table-card">
-        <div class="table-header">
-          <h3 class="table-title">Current Inventory</h3>
-          <p class="table-subtitle">
-            Showing {{ getFilteredItemsCount() }} of {{ getTotalItemsCount() }} products
-            <span *ngIf="searchTerm || selectedCategory || selectedStatus" class="filter-indicator">
-              (filtered)
-            </span>
-          </p>
-        </div>
-        <div class="table-container">
-          <div *ngIf="filteredInventoryItems.length === 0" class="no-results">
-            <mat-icon>search_off</mat-icon>
-            <h4>No products found</h4>
-            <p>Try adjusting your search terms or filters</p>
-            <button mat-button (click)="clearFilters()">Clear all filters</button>
+    <!-- Inventory Table -->
+    <section class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
+      <div class="p-6 border-b border-gray-200">
+        <div class="flex items-center justify-between">
+          <div>
+            <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+              <mat-icon class="!text-gray-600">table_chart</mat-icon>
+              Current Inventory
+            </h3>
+            <p class="text-sm text-gray-600 mt-1">
+              Showing {{ getFilteredItemsCount() }} of {{ getTotalItemsCount() }} products
+              <span *ngIf="searchTerm || selectedCategory || selectedStatus" class="text-primary-600 font-medium">
+                (filtered)
+              </span>
+            </p>
           </div>
-          <table *ngIf="filteredInventoryItems.length > 0" class="inventory-table">
-            <thead>
-              <tr>
-                <th>SKU</th>
-                <th>Product Name</th>
-                <th>Category</th>
-                <th>Quantity</th>
-                <th>Location</th>
-                <th>Status</th>
-                <th>Expiry Date</th>
-                <th>Unit Price</th>
-                <th>Total</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let item of filteredInventoryItems" class="table-row">
-                <td class="sku-cell">{{ item.sku }}</td>
-                <td class="product-name">{{ item.name }}</td>
-                <td class="category">{{ item.category }}</td>
-                <td class="quantity" [class.low-stock]="item.quantity < 10" [class.out-of-stock]="item.quantity === 0">
+        </div>
+      </div>
+
+      <!-- No Results -->
+      <div *ngIf="filteredInventoryItems.length === 0" class="p-12 text-center">
+        <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+          <mat-icon class="!text-gray-400 !text-4xl">search_off</mat-icon>
+        </div>
+        <h4 class="text-lg font-semibold text-gray-900 mb-2">No products found</h4>
+        <p class="text-gray-600 mb-4">Try adjusting your search terms or filters</p>
+        <button 
+          mat-raised-button 
+          color="primary"
+          class="!rounded-lg"
+          (click)="clearFilters()">
+          Clear all filters
+        </button>
+      </div>
+
+      <!-- Table -->
+      <div *ngIf="filteredInventoryItems.length > 0" class="overflow-x-auto">
+        <table class="w-full">
+          <thead class="bg-gray-50 border-b border-gray-200">
+            <tr>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">SKU</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Product Name</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Category</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantity</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Location</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Expiry Date</th>
+              <th class="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Unit Price</th>
+              <th class="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Total</th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200">
+            <tr *ngFor="let item of filteredInventoryItems" class="hover:bg-gray-50 transition-colors">
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">{{ item.sku }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{{ item.name }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ item.category }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm">
+                <span [class]="item.quantity === 0 ? 'text-red-600 font-semibold' : item.quantity < 10 ? 'text-orange-600 font-semibold' : 'text-gray-900'">
                   {{ item.quantity }}
-                </td>
-                <td class="location">{{ item.location }}</td>
-                <td class="status">
-                  <span class="status-badge" [ngClass]="item.statusClass">
-                    {{ item.status }}
-                  </span>
-                </td>
-                <td class="expiry">{{ item.expiryDate || 'N/A' }}</td>
-                <td class="price">₹{{ item.unitPrice | number:'1.2-2' }}</td>
-                <td class="total">₹{{ getProductTotal(item) | number:'1.2-2' }}</td>
-              </tr>
-            </tbody>
-          </table>
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ item.location }}</td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span [class]="'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ' + 
+                  (item.status === 'Good' ? 'bg-green-100 text-green-800' : 
+                   item.status === 'Damaged' ? 'bg-red-100 text-red-800' : 
+                   'bg-orange-100 text-orange-800')">
+                  {{ item.status }}
+                </span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ item.expiryDate }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-right text-gray-900">₹{{ item.unitPrice | number:'1.2-2' }}</td>
+              <td class="px-6 py-4 whitespace-nowrap text-sm text-right font-semibold text-gray-900">₹{{ getProductTotal(item) | number:'1.2-2' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- Delivery Performance -->
+    <section *ngIf="stats?.deliveriesByAgent && getObjectKeys(stats?.deliveriesByAgent || {}).length > 0" 
+             class="bg-white rounded-2xl shadow-card p-6 border border-gray-100">
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <mat-icon class="!text-gray-600">person</mat-icon>
+          Delivery Performance
+        </h3>
+        <p class="text-sm text-gray-600 mt-1">Track delivery agent performance</p>
+      </div>
+      
+      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div *ngFor="let agent of getObjectKeys(stats?.deliveriesByAgent || {})" 
+             class="flex items-center gap-4 p-4 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors">
+          <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full flex items-center justify-center flex-shrink-0">
+            <mat-icon class="!text-white !text-2xl">account_circle</mat-icon>
+          </div>
+          <div class="flex-1 min-w-0">
+            <p class="text-sm font-semibold text-gray-900 truncate">{{ agent }}</p>
+            <p class="text-xs text-gray-600">{{ stats?.deliveriesByAgent?.[agent] || 0 }} deliveries</p>
+          </div>
+          <div class="flex items-center gap-1 text-yellow-500">
+            <mat-icon class="!text-base">star</mat-icon>
+            <span class="text-sm font-semibold">4.8</span>
+          </div>
         </div>
       </div>
     </section>
-
-    <!-- Analytics Section -->
-    <section class="analytics-section">
-      <div class="analytics-grid">
-        
-        <!-- Deliveries by Agent -->
-        <mat-card class="analytics-card agent-chart" 
-                  *ngIf="stats?.deliveriesByAgent && getObjectKeys(stats?.deliveriesByAgent || {}).length > 0">
-          <mat-card-header>
-            <mat-card-title>
-              <mat-icon>person</mat-icon>
-              Delivery Performance
-            </mat-card-title>
-          </mat-card-header>
-          <mat-card-content>
-            <div class="agent-list">
-              <div *ngFor="let agent of getObjectKeys(stats?.deliveriesByAgent || {})" 
-                   class="agent-item">
-                <div class="agent-avatar">
-                  <mat-icon>account_circle</mat-icon>
-                </div>
-                <div class="agent-info">
-                  <div class="agent-name">{{ agent }}</div>
-                  <div class="agent-deliveries">{{ stats?.deliveriesByAgent?.[agent] || 0 }} deliveries</div>
-                </div>
-                <div class="agent-rating">
-                  <mat-icon class="star">star</mat-icon>
-                  <span>4.8</span>
-                </div>
-              </div>
-            </div>
-          </mat-card-content>
-        </mat-card>
-
-      </div>
-    </section>
-
-
 
   </div>
 </div>

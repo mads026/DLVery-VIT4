@@ -1,246 +1,326 @@
-<div class="reports-container">
-  <!-- Report Filters Section -->
-  <section class="filters-section">
-    <div class="filters-header">
-      <div class="filters-title">
-        <mat-icon>assessment</mat-icon>
-        <h2>Report Filters</h2>
+<div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+  <!-- Modern Header -->
+  <div class="bg-white shadow-sm border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      <div class="flex items-center justify-between">
+        <div>
+          <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
+            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center shadow-lg">
+              <mat-icon class="!text-white !text-2xl">assessment</mat-icon>
+            </div>
+            Reports & Analytics
+          </h1>
+          <p class="mt-2 text-sm text-gray-600">Generate and export delivery reports with custom filters</p>
+        </div>
       </div>
-      <p class="filters-subtitle">Configure date range and filters for reports</p>
     </div>
+  </div>
 
-    <div class="filters-content">
-      <div class="filter-row">
-        <div class="filter-group">
-          <label class="filter-label">From Date</label>
-          <mat-form-field appearance="outline" class="date-field">
-            <input matInput
-                   [matDatepicker]="fromPicker"
-                   [(ngModel)]="fromDate"
-                   (dateChange)="onDateChange()"
-                   placeholder="01-01-2024">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+    <!-- Filters Section -->
+    <div class="bg-white rounded-2xl shadow-card p-6 border border-gray-100">
+      <div class="mb-6">
+        <h3 class="text-lg font-semibold text-gray-900 flex items-center gap-2">
+          <mat-icon class="!text-gray-600">filter_list</mat-icon>
+          Report Filters
+        </h3>
+        <p class="text-sm text-gray-600 mt-1">Configure date range and filters for your reports</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+        <!-- From Date -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">From Date</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <input 
+              matInput
+              [matDatepicker]="fromPicker"
+              [(ngModel)]="fromDate"
+              (dateChange)="onDateChange()"
+              placeholder="Select start date"
+              class="!text-sm">
             <mat-datepicker-toggle matSuffix [for]="fromPicker"></mat-datepicker-toggle>
             <mat-datepicker #fromPicker></mat-datepicker>
           </mat-form-field>
         </div>
 
-        <div class="filter-group">
-          <label class="filter-label">To Date</label>
-          <mat-form-field appearance="outline" class="date-field">
-            <input matInput
-                   [matDatepicker]="toPicker"
-                   [(ngModel)]="toDate"
-                   (dateChange)="onDateChange()"
-                   placeholder="31-01-2024">
+        <!-- To Date -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">To Date</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <input 
+              matInput
+              [matDatepicker]="toPicker"
+              [(ngModel)]="toDate"
+              (dateChange)="onDateChange()"
+              placeholder="Select end date"
+              class="!text-sm">
             <mat-datepicker-toggle matSuffix [for]="toPicker"></mat-datepicker-toggle>
             <mat-datepicker #toPicker></mat-datepicker>
           </mat-form-field>
         </div>
 
-        <div class="filter-group">
-          <label class="filter-label">Delivery Agent</label>
-          <mat-form-field appearance="outline" class="agent-field">
-            <mat-select [(value)]="selectedAgent" (selectionChange)="onAgentChange()" placeholder="All Agents">
+        <!-- Delivery Agent -->
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-2">Delivery Agent</label>
+          <mat-form-field appearance="outline" class="w-full">
+            <mat-select 
+              [(value)]="selectedAgent" 
+              (selectionChange)="onAgentChange()" 
+              placeholder="All Agents"
+              class="!text-sm">
               <mat-option value="">All Agents</mat-option>
               <mat-option *ngFor="let agent of availableAgents" [value]="agent">
                 {{ agent }}
               </mat-option>
             </mat-select>
-            <mat-icon matSuffix>expand_more</mat-icon>
+            <mat-icon matSuffix class="!text-gray-400">person</mat-icon>
           </mat-form-field>
         </div>
       </div>
     </div>
-  </section>
 
-  <!-- Report Tabs Section -->
-  <section class="tabs-section">
-    <div class="tab-buttons">
-      <button
-        class="tab-button"
-        [class.active]="activeTab === 'delivery'"
-        (click)="setActiveTab('delivery')">
-        Delivery Report
-      </button>
-      <button
-        class="tab-button"
-        [class.active]="activeTab === 'damaged'"
-        (click)="setActiveTab('damaged')">
-        Damaged Goods
-      </button>
-      <button
-        class="tab-button"
-        [class.active]="activeTab === 'pending'"
-        (click)="setActiveTab('pending')">
-        Pending by Agent
-      </button>
-    </div>
-  </section>
-
-  <!-- Report Content Section -->
-  <section class="report-content">
-
-    <!-- Delivery Report Tab -->
-    <div *ngIf="activeTab === 'delivery'" class="report-panel">
-      <div class="report-header">
-         <div class="report-info">
-           <h3 class="report-title">Delivered Goods Report</h3>
-           <p class="report-subtitle">Goods delivered from {{ formatDate(fromDate) }} to {{ formatDate(toDate) }}</p>
-         </div>
-        <button mat-raised-button class="export-btn" (click)="exportDeliveryReport()">
-          <mat-icon>download</mat-icon>
-          Export
+    <!-- Report Tabs -->
+    <div class="bg-white rounded-2xl shadow-card border border-gray-100 overflow-hidden">
+      <!-- Tab Buttons -->
+      <div class="flex border-b border-gray-200 bg-gray-50">
+        <button
+          class="flex-1 px-6 py-4 text-sm font-semibold transition-all relative"
+          [class.text-primary-600]="activeTab === 'delivery'"
+          [class.text-gray-600]="activeTab !== 'delivery'"
+          [class.bg-white]="activeTab === 'delivery'"
+          (click)="setActiveTab('delivery')">
+          <div class="flex items-center justify-center gap-2">
+            <mat-icon class="!text-lg">local_shipping</mat-icon>
+            Delivery Report
+          </div>
+          <div *ngIf="activeTab === 'delivery'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600"></div>
+        </button>
+        
+        <button
+          class="flex-1 px-6 py-4 text-sm font-semibold transition-all relative"
+          [class.text-primary-600]="activeTab === 'damaged'"
+          [class.text-gray-600]="activeTab !== 'damaged'"
+          [class.bg-white]="activeTab === 'damaged'"
+          (click)="setActiveTab('damaged')">
+          <div class="flex items-center justify-center gap-2">
+            <mat-icon class="!text-lg">warning</mat-icon>
+            Damaged Goods
+          </div>
+          <div *ngIf="activeTab === 'damaged'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600"></div>
+        </button>
+        
+        <button
+          class="flex-1 px-6 py-4 text-sm font-semibold transition-all relative"
+          [class.text-primary-600]="activeTab === 'pending'"
+          [class.text-gray-600]="activeTab !== 'pending'"
+          [class.bg-white]="activeTab === 'pending'"
+          (click)="setActiveTab('pending')">
+          <div class="flex items-center justify-center gap-2">
+            <mat-icon class="!text-lg">pending_actions</mat-icon>
+            Pending by Agent
+          </div>
+          <div *ngIf="activeTab === 'pending'" class="absolute bottom-0 left-0 right-0 h-0.5 bg-primary-600"></div>
         </button>
       </div>
 
-      <div class="report-table-container">
-        <div *ngIf="loading" class="loading-state">
-          <mat-icon class="spin">refresh</mat-icon>
-          <p>Loading report data...</p>
+      <!-- Tab Content -->
+      <div class="p-6">
+        <!-- Delivery Report Tab -->
+        <div *ngIf="activeTab === 'delivery'">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Delivered Goods Report</h3>
+              <p class="text-sm text-gray-600 mt-1">
+                Goods delivered from {{ formatDate(fromDate) }} to {{ formatDate(toDate) }}
+              </p>
+            </div>
+            <button 
+              mat-raised-button 
+              class="!bg-gradient-to-r !from-green-600 !to-green-700 !text-white !font-medium !rounded-xl hover:!shadow-lg !transition-all"
+              (click)="exportDeliveryReport()">
+              <mat-icon class="!mr-2">download</mat-icon>
+              Export to Excel
+            </button>
+          </div>
+
+          <!-- Loading State -->
+          <div *ngIf="loading" class="flex items-center justify-center py-16">
+            <div class="text-center">
+              <div class="inline-flex items-center justify-center w-16 h-16 bg-primary-100 rounded-full mb-4">
+                <mat-icon class="!text-primary-600 !text-4xl animate-spin">refresh</mat-icon>
+              </div>
+              <p class="text-gray-600 font-medium">Loading report data...</p>
+            </div>
+          </div>
+
+          <!-- No Data -->
+          <div *ngIf="!loading && filteredDeliveries.length === 0" class="text-center py-16">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-gray-100 rounded-full mb-4">
+              <mat-icon class="!text-gray-400 !text-4xl">description</mat-icon>
+            </div>
+            <h4 class="text-lg font-semibold text-gray-900 mb-2">No deliveries found</h4>
+            <p class="text-gray-600">Try adjusting your date range or filters</p>
+          </div>
+
+          <!-- Table -->
+          <div *ngIf="!loading && filteredDeliveries.length > 0" class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Delivery ID</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Product</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">SKU</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Agent</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantity</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Scheduled</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Delivered</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr *ngFor="let delivery of filteredDeliveries" class="hover:bg-gray-50 transition-colors">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-primary-600">{{ delivery.id }}</td>
+                  <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ getFirstProductName(delivery) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">{{ getFirstProductSku(delivery) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ getAgentName(delivery.deliveryAgent) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ getTotalItems(delivery) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      {{ formatStatus(delivery.status) }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ delivery.createdAt | date:'M/d/yyyy' }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ getDeliveredDate(delivery) }}</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <div *ngIf="!loading && filteredDeliveries.length === 0" class="empty-state">
-          <mat-icon>description</mat-icon>
-          <h4>No deliveries found</h4>
-          <p>Try adjusting your date range or filters</p>
+        <!-- Damaged Goods Tab -->
+        <div *ngIf="activeTab === 'damaged'">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Damaged Goods Report</h3>
+              <p class="text-sm text-gray-600 mt-1">Items damaged during delivery</p>
+            </div>
+            <button 
+              mat-raised-button 
+              class="!bg-gradient-to-r !from-green-600 !to-green-700 !text-white !font-medium !rounded-xl hover:!shadow-lg !transition-all"
+              (click)="exportDamagedReport()">
+              <mat-icon class="!mr-2">download</mat-icon>
+              Export to Excel
+            </button>
+          </div>
+
+          <!-- No Data -->
+          <div *ngIf="damagedDeliveries.length === 0" class="text-center py-16">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+              <mat-icon class="!text-green-600 !text-4xl">check_circle</mat-icon>
+            </div>
+            <h4 class="text-lg font-semibold text-gray-900 mb-2">No damaged goods</h4>
+            <p class="text-gray-600">All deliveries are in good condition</p>
+          </div>
+
+          <!-- Table -->
+          <div *ngIf="damagedDeliveries.length > 0" class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Delivery ID</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Product</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">SKU</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Agent</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantity</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Scheduled</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Delivered</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr *ngFor="let delivery of damagedDeliveries" class="hover:bg-gray-50 transition-colors">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-primary-600">{{ delivery.id }}</td>
+                  <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ getFirstProductName(delivery) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">{{ getFirstProductSku(delivery) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ getAgentName(delivery.deliveryAgent) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ getTotalItems(delivery) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span class="inline-flex items-center px-3 py-1 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                      DAMAGED
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ delivery.createdAt | date:'M/d/yyyy' }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
         </div>
 
-        <table *ngIf="!loading && filteredDeliveries.length > 0" class="report-table">
-          <thead>
-            <tr>
-              <th>Delivery ID</th>
-              <th>Product</th>
-              <th>SKU</th>
-              <th>Agent</th>
-              <th>Quantity</th>
-              <th>Status</th>
-              <th>Scheduled Date</th>
-              <th>Delivered Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let delivery of filteredDeliveries" class="table-row">
-              <td class="delivery-id">{{ delivery.id }}</td>
-              <td class="product-name">{{ getFirstProductName(delivery) }}</td>
-              <td class="sku">{{ getFirstProductSku(delivery) }}</td>
-              <td class="agent">{{ getAgentName(delivery.deliveryAgent) }}</td>
-              <td class="quantity">{{ getTotalItems(delivery) }}</td>
-              <td class="status">
-                <span class="status-badge" [ngClass]="getStatusClass(delivery.status)">
-                  {{ formatStatus(delivery.status) }}
-                </span>
-              </td>
-              <td class="date">{{ delivery.createdAt | date:'M/d/yyyy' }}</td>
-              <td class="date">{{ getDeliveredDate(delivery) }}</td>
-            </tr>
-          </tbody>
-        </table>
+        <!-- Pending by Agent Tab -->
+        <div *ngIf="activeTab === 'pending'">
+          <div class="flex items-center justify-between mb-6">
+            <div>
+              <h3 class="text-lg font-semibold text-gray-900">Pending Deliveries by Agent</h3>
+              <p class="text-sm text-gray-600 mt-1">Deliveries awaiting completion</p>
+            </div>
+            <button 
+              mat-raised-button 
+              class="!bg-gradient-to-r !from-green-600 !to-green-700 !text-white !font-medium !rounded-xl hover:!shadow-lg !transition-all"
+              (click)="exportPendingReport()">
+              <mat-icon class="!mr-2">download</mat-icon>
+              Export to Excel
+            </button>
+          </div>
+
+          <!-- No Data -->
+          <div *ngIf="pendingDeliveries.length === 0" class="text-center py-16">
+            <div class="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-full mb-4">
+              <mat-icon class="!text-green-600 !text-4xl">check_circle</mat-icon>
+            </div>
+            <h4 class="text-lg font-semibold text-gray-900 mb-2">No pending deliveries</h4>
+            <p class="text-gray-600">All deliveries have been completed</p>
+          </div>
+
+          <!-- Table -->
+          <div *ngIf="pendingDeliveries.length > 0" class="overflow-x-auto">
+            <table class="w-full">
+              <thead class="bg-gray-50 border-b border-gray-200">
+                <tr>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Delivery ID</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Product</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">SKU</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Agent</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantity</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Scheduled</th>
+                  <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Delivered</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-gray-200">
+                <tr *ngFor="let delivery of pendingDeliveries" class="hover:bg-gray-50 transition-colors">
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-primary-600">{{ delivery.id }}</td>
+                  <td class="px-6 py-4 text-sm font-medium text-gray-900">{{ getFirstProductName(delivery) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-600">{{ getFirstProductSku(delivery) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ getAgentName(delivery.deliveryAgent) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm font-semibold text-gray-900">{{ getTotalItems(delivery) }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap">
+                    <span [class]="'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ' + 
+                      (delivery.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' : 
+                       delivery.status === 'IN_TRANSIT' ? 'bg-blue-100 text-blue-800' : 
+                       'bg-purple-100 text-purple-800')">
+                      {{ formatStatus(delivery.status) }}
+                    </span>
+                  </td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">{{ delivery.createdAt | date:'M/d/yyyy' }}</td>
+                  <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-600">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
-
-    <!-- Damaged Goods Tab -->
-    <div *ngIf="activeTab === 'damaged'" class="report-panel">
-      <div class="report-header">
-        <div class="report-info">
-          <h3 class="report-title">Damaged Goods Report</h3>
-          <p class="report-subtitle">Items damaged during delivery</p>
-        </div>
-        <button mat-raised-button class="export-btn" (click)="exportDamagedReport()">
-          <mat-icon>download</mat-icon>
-          Export
-        </button>
-      </div>
-
-      <div class="report-table-container">
-        <table *ngIf="damagedDeliveries.length > 0" class="report-table">
-          <thead>
-            <tr>
-              <th>Delivery ID</th>
-              <th>Product</th>
-              <th>SKU</th>
-              <th>Agent</th>
-              <th>Quantity</th>
-              <th>Status</th>
-              <th>Scheduled Date</th>
-              <th>Delivered Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let delivery of damagedDeliveries" class="table-row">
-              <td class="delivery-id">{{ delivery.id }}</td>
-              <td class="product-name">{{ getFirstProductName(delivery) }}</td>
-              <td class="sku">{{ getFirstProductSku(delivery) }}</td>
-              <td class="agent">{{ getAgentName(delivery.deliveryAgent) }}</td>
-              <td class="quantity">{{ getTotalItems(delivery) }}</td>
-              <td class="status">
-                <span class="status-badge damaged">DAMAGED</span>
-              </td>
-              <td class="date">{{ delivery.createdAt | date:'M/d/yyyy' }}</td>
-              <td class="date">—</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div *ngIf="damagedDeliveries.length === 0" class="empty-state">
-          <mat-icon>check_circle</mat-icon>
-          <h4>No damaged goods</h4>
-          <p>All deliveries are in good condition</p>
-        </div>
-      </div>
-    </div>
-
-    <!-- Pending by Agent Tab -->
-    <div *ngIf="activeTab === 'pending'" class="report-panel">
-      <div class="report-header">
-        <div class="report-info">
-          <h3 class="report-title">Pending Deliveries by Agent</h3>
-          <p class="report-subtitle">Deliveries awaiting completion</p>
-        </div>
-        <button mat-raised-button class="export-btn" (click)="exportPendingReport()">
-          <mat-icon>download</mat-icon>
-          Export
-        </button>
-      </div>
-
-      <div class="report-table-container">
-        <table *ngIf="pendingDeliveries.length > 0" class="report-table">
-          <thead>
-            <tr>
-              <th>Delivery ID</th>
-              <th>Product</th>
-              <th>SKU</th>
-              <th>Agent</th>
-              <th>Quantity</th>
-              <th>Status</th>
-              <th>Scheduled Date</th>
-              <th>Delivered Date</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let delivery of pendingDeliveries" class="table-row">
-              <td class="delivery-id">{{ delivery.id }}</td>
-              <td class="product-name">{{ getFirstProductName(delivery) }}</td>
-              <td class="sku">{{ getFirstProductSku(delivery) }}</td>
-              <td class="agent">{{ getAgentName(delivery.deliveryAgent) }}</td>
-              <td class="quantity">{{ getTotalItems(delivery) }}</td>
-              <td class="status">
-                <span class="status-badge" [ngClass]="getStatusClass(delivery.status)">
-                  {{ formatStatus(delivery.status) }}
-                </span>
-              </td>
-              <td class="date">{{ delivery.createdAt | date:'M/d/yyyy' }}</td>
-              <td class="date">—</td>
-            </tr>
-          </tbody>
-        </table>
-
-        <div *ngIf="pendingDeliveries.length === 0" class="empty-state">
-          <mat-icon>check_circle</mat-icon>
-          <h4>No pending deliveries</h4>
-          <p>All deliveries have been completed</p>
-        </div>
-      </div>
-    </div>
-
-  </section>
+  </div>
 </div>
