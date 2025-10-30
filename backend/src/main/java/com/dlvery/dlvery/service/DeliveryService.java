@@ -509,6 +509,12 @@ public class DeliveryService {
         Delivery delivery = deliveryRepository.findById(request.getDeliveryId())
                 .orElseThrow(() -> new DeliveryNotFoundException("Delivery not found with ID: " + request.getDeliveryId()));
         
+        // Prevent updating already completed deliveries
+        if (isDeliveryCompleted(delivery.getStatus())) {
+            logger.warn("Attempt to update completed delivery {} with status {}", request.getDeliveryId(), delivery.getStatus());
+            throw new InvalidDeliveryStatusException("Cannot update a completed delivery. Current status: " + delivery.getStatus());
+        }
+        
         // Update delivery fields
         delivery.setStatus(request.getStatus());
         delivery.setStatusReason(request.getStatusReason());
@@ -536,6 +542,13 @@ public class DeliveryService {
         logger.info("Delivery {} updated successfully by agent", request.getDeliveryId());
         
         return convertToAgentDto(delivery);
+    }
+    
+    private boolean isDeliveryCompleted(DeliveryStatus status) {
+        return status == DeliveryStatus.DELIVERED || 
+               status == DeliveryStatus.RETURNED || 
+               status == DeliveryStatus.DAMAGED_IN_TRANSIT || 
+               status == DeliveryStatus.DOOR_LOCKED;
     }
     
     private DeliveryAgentDto convertToAgentDto(Delivery delivery) {

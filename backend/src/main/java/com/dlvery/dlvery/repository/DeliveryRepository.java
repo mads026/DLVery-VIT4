@@ -41,7 +41,7 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
      List<String> findAllDeliveryAgents();
      
      // Delivery Agent specific queries
-     @Query("SELECT d FROM Delivery d LEFT JOIN FETCH d.items WHERE d.deliveryAgent = :agent AND d.scheduledDate = CURRENT_DATE ORDER BY d.priority ASC")
+     @Query("SELECT d FROM Delivery d LEFT JOIN FETCH d.items WHERE d.deliveryAgent = :agent AND d.scheduledDate = CURRENT_DATE AND d.status IN ('PENDING', 'ASSIGNED', 'IN_TRANSIT') ORDER BY d.priority ASC")
      List<Delivery> findTodaysDeliveriesByAgent(@Param("agent") String agent);
 
      @Query("SELECT d FROM Delivery d LEFT JOIN FETCH d.items WHERE d.deliveryAgent = :agent AND d.status IN ('PENDING', 'ASSIGNED', 'IN_TRANSIT') AND d.scheduledDate <= CURRENT_DATE ORDER BY d.priority ASC, d.scheduledDate ASC")
@@ -54,6 +54,6 @@ public interface DeliveryRepository extends JpaRepository<Delivery, Long> {
      @Query("SELECT d FROM Delivery d WHERE (d.deliveryAgent = :agentName OR d.deliveryAgent = :agentEmail) AND d.status IN ('PENDING', 'ASSIGNED', 'IN_TRANSIT') AND d.scheduledDate <= CURRENT_DATE ORDER BY d.priority ASC, d.scheduledDate ASC")
      List<Delivery> findPendingDeliveriesByAgentNameOrEmail(@Param("agentName") String agentName, @Param("agentEmail") String agentEmail);
      
-     @Query("SELECT d FROM Delivery d LEFT JOIN FETCH d.items WHERE d.deliveryAgent = :agent AND d.status = 'DELIVERED' ORDER BY d.deliveredAt DESC")
+     @Query("SELECT d FROM Delivery d LEFT JOIN FETCH d.items WHERE d.deliveryAgent = :agent AND d.status IN ('DELIVERED', 'RETURNED', 'DAMAGED_IN_TRANSIT', 'DOOR_LOCKED') ORDER BY d.createdAt DESC")
      List<Delivery> findDeliveredDeliveriesByAgent(@Param("agent") String agent);
 }
