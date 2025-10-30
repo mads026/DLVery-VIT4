@@ -146,10 +146,11 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button (click)="onCancel()" [disabled]="loading">Cancel</button>
+  <button mat-button type="button" (click)="onCancel()" [disabled]="loading">Cancel</button>
   <button mat-raised-button 
-          color="primary" 
-          (click)="onSubmit()" 
+          type="button"
+          color="primary"
+          (click)="onSubmit()"
           [disabled]="!deliveryForm.valid || loading">
     <span *ngIf="loading">Creating...</span>
     <span *ngIf="!loading">Create Delivery</span>

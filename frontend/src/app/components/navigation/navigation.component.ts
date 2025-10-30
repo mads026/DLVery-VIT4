@@ -26,8 +26,9 @@ import { AuthService } from '../../services/auth.service';
   ],
   template: `
     <nav class="bg-gradient-to-r from-primary-600 to-primary-700 shadow-lg sticky top-0 z-50">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div class="flex items-center justify-between h-14">
+      <div class="flex items-center justify-between h-14 px-4">
+        <!-- Left: Logo -->
+        <div class="flex items-center gap-2">
           <!-- Mobile Menu Button -->
           <button 
             class="md:hidden p-2 rounded-lg text-white hover:bg-white/10 transition-colors"
@@ -35,15 +36,14 @@ import { AuthService } from '../../services/auth.service';
             <mat-icon>menu</mat-icon>
           </button>
           
-          <!-- Logo -->
-          <div class="flex items-center gap-2">
-            <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-lg">
-              <mat-icon class="!text-primary-600 !text-xl">local_shipping</mat-icon>
-            </div>
-            <span class="text-white font-bold text-lg hidden sm:block">DIVery</span>
-            <span class="hidden lg:block text-white/80 text-xs">Inventory Management</span>
+          <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-lg">
+            <mat-icon class="!text-primary-600 !text-xl">local_shipping</mat-icon>
           </div>
+          <span class="text-white font-bold text-lg hidden sm:block">DIVery</span>
+        </div>
 
+        <!-- Right: Navigation Links + Profile -->
+        <div class="flex items-center gap-1">
           <!-- Desktop Navigation -->
           <div class="hidden md:flex items-center gap-1">
             <a 
@@ -113,31 +113,70 @@ import { AuthService } from '../../services/auth.service';
     <!-- Mobile Menu Drawer -->
     <mat-sidenav-container *ngIf="isMobileMenuOpen" class="mobile-menu-container">
       <mat-sidenav #drawer mode="over" [opened]="isMobileMenuOpen" (closed)="isMobileMenuOpen = false">
-        <mat-nav-list>
-          <a mat-list-item routerLink="/inventory" (click)="closeMobileMenu()">
-            <mat-icon matListItemIcon>inventory</mat-icon>
-            <span matListItemTitle>Dashboard</span>
+        <div class="mobile-menu-header">
+          <div class="flex items-center gap-2 p-4 bg-gradient-to-r from-primary-600 to-primary-700">
+            <div class="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-lg">
+              <mat-icon class="!text-primary-600 !text-xl">local_shipping</mat-icon>
+            </div>
+            <span class="text-white font-bold text-lg">DIVery</span>
+          </div>
+        </div>
+        <mat-nav-list class="mobile-nav-list">
+          <a 
+            mat-list-item 
+            routerLink="/inventory" 
+            routerLinkActive="mobile-active-link"
+            [routerLinkActiveOptions]="{ exact: true }"
+            (click)="closeMobileMenu()"
+            class="mobile-nav-item">
+            <mat-icon matListItemIcon class="mobile-nav-icon">dashboard</mat-icon>
+            <span matListItemTitle class="mobile-nav-text">Dashboard</span>
           </a>
-          <a mat-list-item routerLink="/inventory/products" (click)="closeMobileMenu()">
-            <mat-icon matListItemIcon>category</mat-icon>
-            <span matListItemTitle>Products</span>
+          <a 
+            mat-list-item 
+            routerLink="/inventory/products" 
+            routerLinkActive="mobile-active-link"
+            (click)="closeMobileMenu()"
+            class="mobile-nav-item">
+            <mat-icon matListItemIcon class="mobile-nav-icon">inventory_2</mat-icon>
+            <span matListItemTitle class="mobile-nav-text">Products</span>
           </a>
-          <a mat-list-item routerLink="/inventory/track" (click)="closeMobileMenu()">
-            <mat-icon matListItemIcon>track_changes</mat-icon>
-            <span matListItemTitle>Track Product</span>
+          <a 
+            mat-list-item 
+            routerLink="/inventory/track" 
+            routerLinkActive="mobile-active-link"
+            (click)="closeMobileMenu()"
+            class="mobile-nav-item">
+            <mat-icon matListItemIcon class="mobile-nav-icon">track_changes</mat-icon>
+            <span matListItemTitle class="mobile-nav-text">Track</span>
           </a>
-          <a mat-list-item routerLink="/inventory/deliveries" (click)="closeMobileMenu()">
-            <mat-icon matListItemIcon>local_shipping</mat-icon>
-            <span matListItemTitle>Deliveries</span>
+          <a 
+            mat-list-item 
+            routerLink="/inventory/deliveries" 
+            routerLinkActive="mobile-active-link"
+            (click)="closeMobileMenu()"
+            class="mobile-nav-item">
+            <mat-icon matListItemIcon class="mobile-nav-icon">local_shipping</mat-icon>
+            <span matListItemTitle class="mobile-nav-text">Deliveries</span>
           </a>
-          <a mat-list-item routerLink="/inventory/reports" (click)="closeMobileMenu()">
-            <mat-icon matListItemIcon>assessment</mat-icon>
-            <span matListItemTitle>Reports</span>
+          <a 
+            mat-list-item 
+            routerLink="/inventory/reports" 
+            routerLinkActive="mobile-active-link"
+            (click)="closeMobileMenu()"
+            class="mobile-nav-item">
+            <mat-icon matListItemIcon class="mobile-nav-icon">assessment</mat-icon>
+            <span matListItemTitle class="mobile-nav-text">Reports</span>
           </a>
-          <mat-divider></mat-divider>
-          <a mat-list-item routerLink="/inventory/profile" (click)="closeMobileMenu()">
-            <mat-icon matListItemIcon>person</mat-icon>
-            <span matListItemTitle>Profile</span>
+          <mat-divider class="my-2"></mat-divider>
+          <a 
+            mat-list-item 
+            routerLink="/inventory/profile" 
+            routerLinkActive="mobile-active-link"
+            (click)="closeMobileMenu()"
+            class="mobile-nav-item">
+            <mat-icon matListItemIcon class="mobile-nav-icon">person</mat-icon>
+            <span matListItemTitle class="mobile-nav-text">Profile</span>
           </a>
         </mat-nav-list>
       </mat-sidenav>
@@ -169,7 +208,7 @@ import { AuthService } from '../../services/auth.service';
 
     .mobile-menu-container {
       position: fixed;
-      top: 64px;
+      top: 56px;
       left: 0;
       right: 0;
       bottom: 0;
@@ -181,8 +220,48 @@ import { AuthService } from '../../services/auth.service';
       background: white;
     }
 
-    mat-nav-list {
-      padding-top: 1rem;
+    .mobile-menu-header {
+      border-bottom: 1px solid #e5e7eb;
+    }
+
+    .mobile-nav-list {
+      padding: 0.5rem 0;
+    }
+
+    .mobile-nav-item {
+      height: 56px !important;
+      margin: 0.25rem 0.5rem;
+      border-radius: 0.5rem;
+      transition: all 0.2s ease;
+    }
+
+    .mobile-nav-item:hover {
+      background: rgba(79, 70, 229, 0.05) !important;
+    }
+
+    .mobile-nav-item.mobile-active-link {
+      background: rgba(79, 70, 229, 0.1) !important;
+      color: rgb(79, 70, 229);
+    }
+
+    .mobile-nav-item.mobile-active-link .mobile-nav-icon {
+      color: rgb(79, 70, 229);
+    }
+
+    .mobile-nav-item.mobile-active-link .mobile-nav-text {
+      color: rgb(79, 70, 229);
+      font-weight: 600;
+    }
+
+    .mobile-nav-icon {
+      color: #6b7280;
+      margin-right: 0.75rem;
+    }
+
+    .mobile-nav-text {
+      font-size: 0.9375rem;
+      font-weight: 500;
+      color: #374151;
     }
 
     ::ng-deep .profile-menu {
@@ -198,12 +277,18 @@ import { AuthService } from '../../services/auth.service';
     ::ng-deep .mat-mdc-menu-item mat-icon {
       margin-right: 0;
     }
+
+    ::ng-deep .mat-mdc-list-item-unscoped-content {
+      display: flex;
+      align-items: center;
+      width: 100%;
+    }
   `]
 })
 export class NavigationComponent {
   isMobileMenuOpen = false;
 
-  constructor(private authService: AuthService) {}
+  constructor(private authService: AuthService) { }
 
   toggleMobileMenu(): void {
     this.isMobileMenuOpen = !this.isMobileMenuOpen;

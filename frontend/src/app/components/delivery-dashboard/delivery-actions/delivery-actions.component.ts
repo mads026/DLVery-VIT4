@@ -74,10 +74,17 @@ import { DeliveryStatus } from '../../../inventory/models/delivery.model';
         <div *ngIf="showDeliveredForm" class="delivered-form">
           <h4>Delivery Completion</h4>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Customer Name</mat-label>
-            <input matInput [(ngModel)]="customerName" placeholder="Enter customer name">
-          </mat-form-field>
+          <div class="modern-input-wrapper">
+            <label class="modern-input-label">Customer Name</label>
+            <div class="modern-input-container">
+              <mat-icon class="prefix-icon">person</mat-icon>
+              <input 
+                [(ngModel)]="customerName" 
+                placeholder="Enter customer name"
+                class="modern-input has-prefix"
+                type="text">
+            </div>
+          </div>
 
           <div class="signature-section">
             <h5>Customer Signature</h5>
@@ -101,10 +108,17 @@ import { DeliveryStatus } from '../../../inventory/models/delivery.model';
             </div>
           </div>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Notes (Optional)</mat-label>
-            <textarea matInput [(ngModel)]="notes" rows="3" placeholder="Any additional notes"></textarea>
-          </mat-form-field>
+          <div class="modern-textarea-wrapper">
+            <label class="modern-textarea-label">Notes (Optional)</label>
+            <div class="modern-textarea-container">
+              <mat-icon class="prefix-icon">note</mat-icon>
+              <textarea 
+                [(ngModel)]="notes" 
+                rows="3"
+                placeholder="Any additional notes"
+                class="modern-textarea has-prefix"></textarea>
+            </div>
+          </div>
 
           <div class="form-actions">
             <button mat-button (click)="cancelDeliveredForm()">Cancel</button>
@@ -119,16 +133,34 @@ import { DeliveryStatus } from '../../../inventory/models/delivery.model';
         <div *ngIf="showIssueForm" class="issue-form">
           <h4>Report Issue: {{ selectedIssueType }}</h4>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Reason</mat-label>
-            <textarea matInput [(ngModel)]="issueReason" rows="3"
-                      [placeholder]="getIssuePlaceholder()" required></textarea>
-          </mat-form-field>
+          <div class="modern-textarea-wrapper">
+            <label class="modern-textarea-label required">Reason</label>
+            <div class="modern-textarea-container" [class.has-error]="!issueReason && showValidation">
+              <mat-icon class="prefix-icon">report_problem</mat-icon>
+              <textarea 
+                [(ngModel)]="issueReason" 
+                rows="3"
+                [placeholder]="getIssuePlaceholder()"
+                class="modern-textarea has-prefix"
+                (blur)="showValidation = true"></textarea>
+            </div>
+            <div *ngIf="!issueReason && showValidation" class="error-message">
+              <mat-icon class="error-icon">error</mat-icon>
+              <span>Reason is required</span>
+            </div>
+          </div>
 
-          <mat-form-field appearance="outline" class="full-width">
-            <mat-label>Additional Notes</mat-label>
-            <textarea matInput [(ngModel)]="notes" rows="2" placeholder="Any additional information"></textarea>
-          </mat-form-field>
+          <div class="modern-textarea-wrapper">
+            <label class="modern-textarea-label">Additional Notes</label>
+            <div class="modern-textarea-container">
+              <mat-icon class="prefix-icon">note</mat-icon>
+              <textarea 
+                [(ngModel)]="notes" 
+                rows="2"
+                placeholder="Any additional information"
+                class="modern-textarea has-prefix"></textarea>
+            </div>
+          </div>
 
           <div class="form-actions">
             <button mat-button (click)="cancelIssueForm()">Cancel</button>
@@ -209,6 +241,116 @@ import { DeliveryStatus } from '../../../inventory/models/delivery.model';
       margin-bottom: 16px;
     }
 
+    /* Modern Input Styles */
+    .modern-input-wrapper,
+    .modern-textarea-wrapper {
+      width: 100%;
+      margin-bottom: 1rem;
+    }
+
+    .modern-input-label,
+    .modern-textarea-label {
+      display: block;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: #374151;
+      margin-bottom: 0.5rem;
+    }
+
+    .modern-input-label.required::after,
+    .modern-textarea-label.required::after {
+      content: ' *';
+      color: #ef4444;
+    }
+
+    .modern-input-container,
+    .modern-textarea-container {
+      position: relative;
+      display: flex;
+      align-items: flex-start;
+      background: white;
+      border: 2px solid #d1d5db;
+      border-radius: 0.75rem;
+      transition: all 0.2s ease;
+      overflow: hidden;
+    }
+
+    .modern-input-container:hover,
+    .modern-textarea-container:hover {
+      border-color: #9ca3af;
+    }
+
+    .modern-input-container:focus-within,
+    .modern-textarea-container:focus-within {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+    }
+
+    .modern-input-container.has-error,
+    .modern-textarea-container.has-error {
+      border-color: #ef4444;
+    }
+
+    .modern-input-container.has-error:focus-within,
+    .modern-textarea-container.has-error:focus-within {
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+    }
+
+    .modern-input,
+    .modern-textarea {
+      flex: 1;
+      padding: 0.75rem 1rem;
+      border: none;
+      outline: none;
+      font-size: 0.875rem;
+      color: #1f2937;
+      background: transparent;
+      width: 100%;
+      font-family: inherit;
+    }
+
+    .modern-input.has-prefix,
+    .modern-textarea.has-prefix {
+      padding-left: 0.5rem;
+    }
+
+    .modern-input::placeholder,
+    .modern-textarea::placeholder {
+      color: #9ca3af;
+    }
+
+    .modern-textarea {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .modern-input-container .prefix-icon,
+    .modern-textarea-container .prefix-icon {
+      color: #6b7280;
+      font-size: 1.25rem;
+      width: 1.25rem;
+      height: 1.25rem;
+      flex-shrink: 0;
+      margin-left: 0.75rem;
+      margin-right: 0.25rem;
+      margin-top: 0.75rem;
+    }
+
+    .error-message {
+      display: flex;
+      align-items: center;
+      gap: 0.375rem;
+      margin-top: 0.5rem;
+      font-size: 0.75rem;
+      color: #ef4444;
+    }
+
+    .error-icon {
+      font-size: 0.875rem;
+      width: 0.875rem;
+      height: 0.875rem;
+    }
+
     .signature-section {
       margin-bottom: 16px;
     }
@@ -284,6 +426,7 @@ export class DeliveryActionsComponent {
   notes = '';
   issueReason = '';
   updating = false;
+  showValidation = false;
 
   private isDrawing = false;
   private ctx: CanvasRenderingContext2D | null = null;
@@ -296,6 +439,19 @@ export class DeliveryActionsComponent {
     private snackBar: MatSnackBar
   ) {
     this.customerName = data.delivery.customerName || '';
+    
+    // Check if delivery is already completed
+    if (this.isDeliveryCompleted()) {
+      this.snackBar.open('This delivery is already completed and cannot be modified', 'Close', {
+        duration: 3000
+      });
+      setTimeout(() => this.close(), 1500);
+    }
+  }
+
+  isDeliveryCompleted(): boolean {
+    const completedStatuses = ['DELIVERED', 'RETURNED', 'DAMAGED_IN_TRANSIT', 'DOOR_LOCKED'];
+    return completedStatuses.includes(this.data.delivery.status);
   }
 
   ngAfterViewInit(): void {
@@ -307,10 +463,16 @@ export class DeliveryActionsComponent {
   }
 
   markInTransit(): void {
+    if (this.isDeliveryCompleted()) {
+      return;
+    }
     this.updateDeliveryStatus(DeliveryStatus.IN_TRANSIT, 'Delivery started');
   }
 
   openDeliveredForm(): void {
+    if (this.isDeliveryCompleted()) {
+      return;
+    }
     this.showDeliveredForm = true;
     this.showIssueForm = false;
     // Initialize canvas after view update
@@ -325,6 +487,11 @@ export class DeliveryActionsComponent {
   }
 
   confirmDelivered(): void {
+    // Prevent double submission
+    if (this.updating) {
+      return;
+    }
+
     const signatureBase64 = this.getSignatureBase64();
 
     const request: DeliveryUpdateRequest = {
@@ -339,21 +506,33 @@ export class DeliveryActionsComponent {
   }
 
   reportDoorLocked(): void {
+    if (this.isDeliveryCompleted()) {
+      return;
+    }
     this.selectedIssueType = 'Door Locked';
     this.showIssueForm = true;
     this.showDeliveredForm = false;
+    this.showValidation = false;
   }
 
   reportDamaged(): void {
+    if (this.isDeliveryCompleted()) {
+      return;
+    }
     this.selectedIssueType = 'Damaged';
     this.showIssueForm = true;
     this.showDeliveredForm = false;
+    this.showValidation = false;
   }
 
   markReturn(): void {
+    if (this.isDeliveryCompleted()) {
+      return;
+    }
     this.selectedIssueType = 'Return';
     this.showIssueForm = true;
     this.showDeliveredForm = false;
+    this.showValidation = false;
   }
 
   cancelIssueForm(): void {
@@ -361,9 +540,15 @@ export class DeliveryActionsComponent {
     this.selectedIssueType = '';
     this.issueReason = '';
     this.notes = '';
+    this.showValidation = false;
   }
 
   confirmIssue(): void {
+    // Prevent double submission
+    if (this.updating || !this.issueReason) {
+      return;
+    }
+
     let status: DeliveryStatus = DeliveryStatus.PENDING; // Default fallback
     switch (this.selectedIssueType) {
       case 'Door Locked':
@@ -410,6 +595,11 @@ export class DeliveryActionsComponent {
   }
 
   private updateDelivery(request: DeliveryUpdateRequest, successMessage?: string): void {
+    // Prevent double submission
+    if (this.updating) {
+      return;
+    }
+
     this.updating = true;
 
     this.deliveryAgentService.updateDelivery(request).subscribe({

@@ -157,34 +157,37 @@ export class DeliveryFormComponent implements OnInit {
   }
 
   onSubmit(): void {
-    if (this.deliveryForm.valid) {
-      this.loading = true;
-      const formValue = this.deliveryForm.value;
-
-      const delivery: Delivery = {
-        ...formValue,
-        items: formValue.items.map((item: any) => ({
-          ...item,
-          productName: this.getProductName(item.productSku)
-        })),
-        deliveryId: '',
-        status: 'PENDING' as any,
-        createdAt: new Date().toISOString()
-      };
-
-      this.inventoryService.createDelivery(delivery).subscribe({
-        next: (createdDelivery) => {
-          this.snackBar.open('Delivery created successfully', 'Close', { duration: 3000 });
-          this.dialogRef.close(true);
-          this.loading = false;
-        },
-        error: (error) => {
-          console.error('Error creating delivery:', error);
-          this.snackBar.open('Error creating delivery', 'Close', { duration: 3000 });
-          this.loading = false;
-        }
-      });
+    // Prevent double submission
+    if (this.loading || !this.deliveryForm.valid) {
+      return;
     }
+
+    this.loading = true;
+    const formValue = this.deliveryForm.value;
+
+    const delivery: Delivery = {
+      ...formValue,
+      items: formValue.items.map((item: any) => ({
+        ...item,
+        productName: this.getProductName(item.productSku)
+      })),
+      deliveryId: '',
+      status: 'PENDING' as any,
+      createdAt: new Date().toISOString()
+    };
+
+    this.inventoryService.createDelivery(delivery).subscribe({
+      next: (createdDelivery) => {
+        this.snackBar.open('Delivery created successfully', 'Close', { duration: 3000 });
+        this.dialogRef.close(true);
+        this.loading = false;
+      },
+      error: (error) => {
+        console.error('Error creating delivery:', error);
+        this.snackBar.open('Error creating delivery', 'Close', { duration: 3000 });
+        this.loading = false;
+      }
+    });
   }
 
   onCancel(): void {

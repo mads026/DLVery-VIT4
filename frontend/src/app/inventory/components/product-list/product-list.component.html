@@ -1,36 +1,28 @@
 <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
   <!-- Modern Header -->
   <div class="bg-white shadow-sm border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="px-4 py-6">
       <div class="flex items-center justify-between">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
-              <mat-icon class="!text-white !text-2xl">inventory_2</mat-icon>
-            </div>
-            Product Inventory
-          </h1>
-          <p class="mt-2 text-sm text-gray-600">Manage your product catalog and inventory levels</p>
-        </div>
+        <div></div>
       </div>
     </div>
   </div>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
+  <div class="max-w-7xl mx-auto mobile-container px-4 sm:px-6 lg:px-8 py-8 space-y-6">
     <!-- Controls Section -->
-    <div class="bg-white rounded-2xl shadow-card p-6 border border-gray-100">
+    <div class="bg-white rounded-2xl shadow-card p-4 sm:p-6 border border-gray-100">
       <div class="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
         <!-- Left Controls -->
-        <div class="flex flex-wrap gap-3">
+        <div class="flex flex-col sm:flex-row flex-wrap gap-3 mobile-button-stack">
           <button 
-            class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-lg transition-all"
+            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-primary-600 to-primary-700 text-white font-medium rounded-xl hover:shadow-lg transition-all"
             (click)="openProductForm()">
             <mat-icon class="!text-lg">add</mat-icon>
             Add Product
           </button>
           
           <button 
-            class="inline-flex items-center gap-2 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all"
+            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-white border-2 border-gray-300 text-gray-700 font-medium rounded-xl hover:bg-gray-50 transition-all"
             (click)="fileInput.click()">
             <mat-icon class="!text-lg">upload_file</mat-icon>
             Upload CSV
@@ -38,7 +30,7 @@
           <input type="file" #fileInput (change)="onFileSelected($event)" accept=".csv,.xlsx" class="hidden">
           
           <button 
-            class="inline-flex items-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white font-medium rounded-xl hover:shadow-lg transition-all"
+            class="inline-flex items-center justify-center gap-2 px-4 py-2.5 bg-gradient-to-r from-green-600 to-green-700 text-white font-medium rounded-xl hover:shadow-lg transition-all"
             (click)="downloadTemplate()">
             <mat-icon class="!text-lg">download</mat-icon>
             Download Template
@@ -46,7 +38,7 @@
         </div>
 
         <!-- Right Controls -->
-        <div class="flex flex-col sm:flex-row gap-3">
+        <div class="flex flex-col sm:flex-row gap-3 mobile-controls w-full lg:w-auto">
           <div class="relative">
             <mat-icon class="absolute left-3 top-1/2 -translate-y-1/2 !text-gray-400 !text-lg">search</mat-icon>
             <input 
@@ -71,7 +63,7 @@
 
       
       <!-- Filter Checkboxes -->
-      <div class="flex gap-6 mt-4 pt-4 border-t border-gray-200">
+      <div class="flex flex-col sm:flex-row gap-3 sm:gap-6 mt-4 pt-4 border-t border-gray-200">
         <label class="flex items-center gap-2 cursor-pointer">
           <input 
             type="checkbox" 
@@ -113,8 +105,8 @@
         <p class="text-gray-600 mb-4">Try adjusting your search or filters</p>
       </div>
 
-      <!-- Table -->
-      <div *ngIf="!loading && filteredProducts.length > 0" class="overflow-x-auto">
+      <!-- Desktop Table -->
+      <div *ngIf="!loading && filteredProducts.length > 0" class="overflow-x-auto desktop-table">
         <table class="w-full">
           <thead class="bg-gray-50 border-b border-gray-200">
             <tr>
@@ -123,6 +115,7 @@
               <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Category</th>
               <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Quantity</th>
               <th class="px-6 py-4 text-right text-xs font-semibold text-gray-600 uppercase tracking-wider">Unit Price</th>
+              <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Expiry Date</th>
               <th class="px-6 py-4 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">Status</th>
               <th class="px-6 py-4 text-center text-xs font-semibold text-gray-600 uppercase tracking-wider">Actions</th>
             </tr>
@@ -148,6 +141,12 @@
               </td>
               <td class="px-6 py-4 whitespace-nowrap text-right">
                 <span class="text-sm font-semibold text-green-600">₹{{ product.unitPrice | number:'1.2-2' }}</span>
+              </td>
+              <td class="px-6 py-4 whitespace-nowrap">
+                <span *ngIf="product.expiryDate" [class]="'text-sm font-medium ' + (isExpiringSoon(product) ? 'text-red-600' : 'text-gray-900')">
+                  {{ product.expiryDate | date:'MMM d, y' }}
+                </span>
+                <span *ngIf="!product.expiryDate" class="text-sm text-gray-400">N/A</span>
               </td>
               <td class="px-6 py-4 whitespace-nowrap">
                 <span [class]="'inline-flex items-center px-3 py-1 rounded-full text-xs font-medium ' + 
@@ -177,6 +176,76 @@
             </tr>
           </tbody>
         </table>
+      </div>
+
+      <!-- Mobile Cards View -->
+      <div *ngIf="!loading && filteredProducts.length > 0" class="mobile-cards p-4">
+        <div *ngFor="let product of filteredProducts" class="product-card">
+          <!-- Card Header -->
+          <div class="product-card-header">
+            <div>
+              <div class="product-card-title">{{ product.name }}</div>
+              <div class="product-card-sku">{{ product.sku }}</div>
+            </div>
+            <span [class]="'inline-flex items-center px-2.5 py-1 rounded-full text-xs font-medium ' + 
+              (getStatusText(product) === 'In Stock' ? 'bg-green-100 text-green-800' : 
+               getStatusText(product) === 'Low Stock' ? 'bg-orange-100 text-orange-800' : 
+               getStatusText(product) === 'Out of Stock' ? 'bg-red-100 text-red-800' : 
+               'bg-red-100 text-red-800')">
+              {{ getStatusText(product) }}
+            </span>
+          </div>
+
+          <!-- Card Body -->
+          <div class="product-card-body">
+            <div class="product-card-field">
+              <span class="product-card-label">Category</span>
+              <span class="product-card-value">{{ product.category.replace('_', ' ') }}</span>
+            </div>
+
+            <div class="product-card-field">
+              <span class="product-card-label">Quantity</span>
+              <span [class]="'product-card-value ' + (product.quantity === 0 ? 'text-red-600' : product.quantity < 10 ? 'text-orange-600' : '')">
+                {{ product.quantity }}
+              </span>
+            </div>
+
+            <div class="product-card-field">
+              <span class="product-card-label">Unit Price</span>
+              <span class="product-card-value text-green-600">₹{{ product.unitPrice | number:'1.2-2' }}</span>
+            </div>
+
+            <div class="product-card-field">
+              <span class="product-card-label">Expiry Date</span>
+              <span *ngIf="product.expiryDate" [class]="'product-card-value ' + (isExpiringSoon(product) ? 'text-red-600' : '')">
+                {{ product.expiryDate | date:'MMM d, y' }}
+              </span>
+              <span *ngIf="!product.expiryDate" class="product-card-value text-gray-400">N/A</span>
+            </div>
+          </div>
+
+          <!-- Description (if exists) -->
+          <div *ngIf="product.description" class="mb-3">
+            <span class="product-card-label">Description</span>
+            <p class="text-sm text-gray-600 mt-1">{{ product.description }}</p>
+          </div>
+
+          <!-- Card Actions -->
+          <div class="product-card-actions">
+            <button 
+              class="inline-flex items-center justify-center gap-1 bg-primary-50 text-primary-600 hover:bg-primary-100"
+              (click)="openProductForm(product)">
+              <mat-icon class="!text-base">edit</mat-icon>
+              Edit
+            </button>
+            <button 
+              class="inline-flex items-center justify-center gap-1 bg-red-50 text-red-600 hover:bg-red-100"
+              (click)="deleteProduct(product)">
+              <mat-icon class="!text-base">delete</mat-icon>
+              Delete
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   </div>

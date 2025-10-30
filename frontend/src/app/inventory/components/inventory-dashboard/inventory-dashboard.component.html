@@ -1,17 +1,9 @@
 <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
   <!-- Modern Header -->
   <div class="bg-white shadow-sm border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="px-4 py-6">
       <div class="flex items-center justify-between">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <div class="w-12 h-12 bg-gradient-to-br from-primary-500 to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
-              <mat-icon class="!text-white !text-2xl">dashboard</mat-icon>
-            </div>
-            Inventory Dashboard
-          </h1>
-          <p class="mt-2 text-sm text-gray-600">Monitor your inventory and delivery operations in real-time</p>
-        </div>
+        <div></div>
         <button 
           mat-fab 
           extended
@@ -44,96 +36,42 @@
         <mat-icon class="!text-gray-600">analytics</mat-icon>
         Key Metrics
       </h2>
-      <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         
         <!-- Total Products -->
-        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-              <mat-icon class="!text-white !text-2xl">inventory_2</mat-icon>
-            </div>
-            <span class="text-xs font-semibold text-blue-600 bg-blue-50 px-3 py-1 rounded-full">Active</span>
-          </div>
-          <div class="space-y-1">
-            <p class="text-sm font-medium text-gray-600">Total Products</p>
-            <p class="text-3xl font-bold text-gray-900">{{ calculateTotalProducts() }}</p>
-            <p class="text-xs text-gray-500">Active inventory items</p>
-          </div>
+        <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-3 border border-gray-100">
+          <p class="text-xs font-semibold text-blue-600 mb-1">Total Products</p>
+          <p class="text-xl font-bold text-gray-900">{{ calculateTotalProducts() }}</p>
         </div>
 
         <!-- Total Value -->
-        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
-              <mat-icon class="!text-white !text-2xl">account_balance_wallet</mat-icon>
-            </div>
-            <span class="text-xs font-semibold text-green-600 bg-green-50 px-3 py-1 rounded-full">Value</span>
-          </div>
-          <div class="space-y-1">
-            <p class="text-sm font-medium text-gray-600">Total Value</p>
-            <p class="text-3xl font-bold text-gray-900">₹{{ calculateTotalValue() | number:'1.0-0' }}</p>
-            <p class="text-xs text-gray-500">Current inventory value</p>
-          </div>
+        <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-3 border border-gray-100">
+          <p class="text-xs font-semibold text-green-600 mb-1">Total Value</p>
+          <p class="text-xl font-bold text-gray-900">₹{{ calculateTotalValue() | number:'1.0-0' }}</p>
         </div>
 
         <!-- Damaged Items -->
-        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
-              <mat-icon class="!text-white !text-2xl">warning</mat-icon>
-            </div>
-            <span class="text-xs font-semibold text-red-600 bg-red-50 px-3 py-1 rounded-full">Alert</span>
-          </div>
-          <div class="space-y-1">
-            <p class="text-sm font-medium text-gray-600">Damaged Items</p>
-            <p class="text-3xl font-bold text-red-600">{{ calculateDamagedProducts() }}</p>
-            <p class="text-xs text-gray-500">Require attention</p>
-          </div>
+        <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-3 border border-gray-100">
+          <p class="text-xs font-semibold text-red-600 mb-1">Damaged Items</p>
+          <p class="text-xl font-bold text-red-600">{{ calculateDamagedProducts() }}</p>
         </div>
 
         <!-- Expiring Soon -->
-        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center">
-              <mat-icon class="!text-white !text-2xl">schedule</mat-icon>
-            </div>
-            <span class="text-xs font-semibold text-orange-600 bg-orange-50 px-3 py-1 rounded-full">Urgent</span>
-          </div>
-          <div class="space-y-1">
-            <p class="text-sm font-medium text-gray-600">Expiring Soon</p>
-            <p class="text-3xl font-bold text-orange-600">{{ calculateExpiringProducts() }}</p>
-            <p class="text-xs text-gray-500">Within 7 days</p>
-          </div>
+        <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-3 border border-gray-100">
+          <p class="text-xs font-semibold text-orange-600 mb-1">Expiring Soon</p>
+          <p class="text-xl font-bold text-orange-600">{{ calculateExpiringProducts() }}</p>
         </div>
 
         <!-- Pending Deliveries -->
-        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <mat-icon class="!text-white !text-2xl">local_shipping</mat-icon>
-            </div>
-            <span class="text-xs font-semibold text-purple-600 bg-purple-50 px-3 py-1 rounded-full">Pending</span>
-          </div>
-          <div class="space-y-1">
-            <p class="text-sm font-medium text-gray-600">Pending Deliveries</p>
-            <p class="text-3xl font-bold text-purple-600">{{ calculatePendingDeliveries() }}</p>
-            <p class="text-xs text-gray-500">Awaiting dispatch</p>
-          </div>
+        <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-3 border border-gray-100">
+          <p class="text-xs font-semibold text-purple-600 mb-1">Pending Deliveries</p>
+          <p class="text-xl font-bold text-purple-600">{{ calculatePendingDeliveries() }}</p>
         </div>
 
         <!-- Successful Deliveries -->
-        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-teal-500 to-teal-600 rounded-xl flex items-center justify-center">
-              <mat-icon class="!text-white !text-2xl">check_circle</mat-icon>
-            </div>
-            <span class="text-xs font-semibold text-teal-600 bg-teal-50 px-3 py-1 rounded-full">Success</span>
-          </div>
-          <div class="space-y-1">
-            <p class="text-sm font-medium text-gray-600">Successful Deliveries</p>
-            <p class="text-3xl font-bold text-teal-600">{{ calculateSuccessfulDeliveries() }}</p>
-            <p class="text-xs text-gray-500">Successfully delivered</p>
-          </div>
+        <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-3 border border-gray-100">
+          <p class="text-xs font-semibold text-teal-600 mb-1">Successful Deliveries</p>
+          <p class="text-xl font-bold text-teal-600">{{ calculateSuccessfulDeliveries() }}</p>
         </div>
 
       </div>

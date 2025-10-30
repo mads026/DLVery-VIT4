@@ -83,13 +83,13 @@ import { DeliveryActionsComponent } from '../delivery-actions/delivery-actions.c
       </div>
 
       <div class="card-actions">
-        <button *ngIf="!isDelivered" mat-raised-button color="primary" (click)="openActions()" class="action-button">
+        <button *ngIf="!isCompleted()" mat-raised-button color="primary" (click)="openActions()" class="action-button">
           <mat-icon>edit</mat-icon>
           Update Status
         </button>
-        <div *ngIf="isDelivered" class="delivered-badge">
-          <mat-icon>check_circle</mat-icon>
-          <span>Completed</span>
+        <div *ngIf="isCompleted()" class="delivered-badge" [class.issue-badge]="hasIssue()">
+          <mat-icon>{{ getCompletionIcon() }}</mat-icon>
+          <span>{{ getCompletionLabel() }}</span>
         </div>
       </div>
     </div>
@@ -98,7 +98,7 @@ import { DeliveryActionsComponent } from '../delivery-actions/delivery-actions.c
     .delivery-card {
       background: white;
       padding: 1rem;
-      border-left: 4px solid #2196f3;
+      border-left: 4px solid #e5e7eb;
       border-radius: 0.5rem;
       transition: all 0.2s ease;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
@@ -254,6 +254,12 @@ import { DeliveryActionsComponent } from '../delivery-actions/delivery-actions.c
       border-radius: 0.25rem;
     }
 
+    .delivered-badge.issue-badge {
+      color: #f59e0b;
+      background: #fffbeb;
+      border: 1px solid #fbbf24;
+    }
+
     .delivered-badge mat-icon {
       font-size: 1.2rem;
       width: 1.2rem;
@@ -326,5 +332,40 @@ export class DeliveryCardComponent {
         this.statusUpdate.emit(result);
       }
     });
+  }
+
+  isCompleted(): boolean {
+    // Check if delivery is in a completed state (can't be updated anymore)
+    return ['DELIVERED', 'RETURNED', 'DAMAGED_IN_TRANSIT', 'DOOR_LOCKED'].includes(this.delivery.status);
+  }
+
+  hasIssue(): boolean {
+    return ['RETURNED', 'DAMAGED_IN_TRANSIT', 'DOOR_LOCKED'].includes(this.delivery.status);
+  }
+
+  getCompletionIcon(): string {
+    if (this.delivery.status === 'DELIVERED') {
+      return 'check_circle';
+    } else if (this.delivery.status === 'RETURNED') {
+      return 'keyboard_return';
+    } else if (this.delivery.status === 'DAMAGED_IN_TRANSIT') {
+      return 'warning';
+    } else if (this.delivery.status === 'DOOR_LOCKED') {
+      return 'lock';
+    }
+    return 'check_circle';
+  }
+
+  getCompletionLabel(): string {
+    if (this.delivery.status === 'DELIVERED') {
+      return 'Completed';
+    } else if (this.delivery.status === 'RETURNED') {
+      return 'Returned';
+    } else if (this.delivery.status === 'DAMAGED_IN_TRANSIT') {
+      return 'Damaged';
+    } else if (this.delivery.status === 'DOOR_LOCKED') {
+      return 'Door Locked';
+    }
+    return 'Completed';
   }
 }

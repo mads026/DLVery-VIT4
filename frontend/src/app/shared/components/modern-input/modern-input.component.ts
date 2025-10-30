@@ -69,10 +69,6 @@ import { MatIconModule } from '@angular/material/icon';
       margin-bottom: 0.5rem;
     }
 
-    .modern-input-label.required::after {
-      content: ' *';
-      color: #ef4444;
-    }
 
     .modern-input-container {
       position: relative;

@@ -45,7 +45,7 @@ export class ProductListComponent implements OnInit {
   showDamagedOnly = false;
   showPerishableOnly = false;
 
-  displayedColumns: string[] = ['sku', 'name', 'category', 'quantity', 'unitPrice', 'status', 'actions'];
+  displayedColumns: string[] = ['sku', 'name', 'category', 'quantity', 'unitPrice', 'expiryDate', 'status', 'actions'];
   categories = Object.values(ProductCategory);
 
   constructor(

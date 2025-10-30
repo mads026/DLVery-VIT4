@@ -1,17 +1,9 @@
 <div class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
   <!-- Modern Header -->
   <div class="bg-white shadow-sm border-b border-gray-200">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+    <div class="px-4 py-6">
       <div class="flex items-center justify-between">
-        <div>
-          <h1 class="text-3xl font-bold text-gray-900 flex items-center gap-3">
-            <div class="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-xl flex items-center justify-center shadow-lg">
-              <mat-icon class="!text-white !text-2xl">local_shipping</mat-icon>
-            </div>
-            Delivery Management
-          </h1>
-          <p class="mt-2 text-sm text-gray-600">Manage and track product deliveries</p>
-        </div>
+        <div></div>
         <button 
           mat-fab 
           extended
@@ -43,71 +35,36 @@
         <mat-icon class="!text-gray-600">analytics</mat-icon>
         Delivery Overview
       </h2>
-      <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-3">
         
         <!-- Total Deliveries -->
-        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-xl flex items-center justify-center">
-              <mat-icon class="!text-white !text-2xl">local_shipping</mat-icon>
-            </div>
-          </div>
-          <div class="space-y-1">
-            <p class="text-sm font-medium text-gray-600">Total</p>
-            <p class="text-3xl font-bold text-gray-900">{{ getTotalDeliveries() }}</p>
-          </div>
+        <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-3 border border-gray-100">
+          <p class="text-xs font-semibold text-blue-600 mb-1">Total</p>
+          <p class="text-xl font-bold text-gray-900">{{ getTotalDeliveries() }}</p>
         </div>
 
         <!-- Pending -->
-        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-yellow-500 to-yellow-600 rounded-xl flex items-center justify-center">
-              <mat-icon class="!text-white !text-2xl">schedule</mat-icon>
-            </div>
-          </div>
-          <div class="space-y-1">
-            <p class="text-sm font-medium text-gray-600">Pending</p>
-            <p class="text-3xl font-bold text-yellow-600">{{ getPendingDeliveries() }}</p>
-          </div>
+        <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-3 border border-gray-100">
+          <p class="text-xs font-semibold text-yellow-600 mb-1">Pending</p>
+          <p class="text-xl font-bold text-yellow-600">{{ getPendingDeliveries() }}</p>
         </div>
 
         <!-- In Transit -->
-        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-purple-500 to-purple-600 rounded-xl flex items-center justify-center">
-              <mat-icon class="!text-white !text-2xl">directions_car</mat-icon>
-            </div>
-          </div>
-          <div class="space-y-1">
-            <p class="text-sm font-medium text-gray-600">In Transit</p>
-            <p class="text-3xl font-bold text-purple-600">{{ getInTransitDeliveries() }}</p>
-          </div>
+        <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-3 border border-gray-100">
+          <p class="text-xs font-semibold text-purple-600 mb-1">In Transit</p>
+          <p class="text-xl font-bold text-purple-600">{{ getInTransitDeliveries() }}</p>
         </div>
 
         <!-- Delivered -->
-        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-green-500 to-green-600 rounded-xl flex items-center justify-center">
-              <mat-icon class="!text-white !text-2xl">check_circle</mat-icon>
-            </div>
-          </div>
-          <div class="space-y-1">
-            <p class="text-sm font-medium text-gray-600">Delivered</p>
-            <p class="text-3xl font-bold text-green-600">{{ getDeliveredCount() }}</p>
-          </div>
+        <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-3 border border-gray-100">
+          <p class="text-xs font-semibold text-green-600 mb-1">Delivered</p>
+          <p class="text-xl font-bold text-green-600">{{ getDeliveredCount() }}</p>
         </div>
 
         <!-- Damaged -->
-        <div class="bg-white rounded-2xl shadow-card hover:shadow-lg transition-all p-6 border border-gray-100">
-          <div class="flex items-center justify-between mb-4">
-            <div class="w-12 h-12 bg-gradient-to-br from-red-500 to-red-600 rounded-xl flex items-center justify-center">
-              <mat-icon class="!text-white !text-2xl">warning</mat-icon>
-            </div>
-          </div>
-          <div class="space-y-1">
-            <p class="text-sm font-medium text-gray-600">Damaged</p>
-            <p class="text-3xl font-bold text-red-600">{{ getDamagedDeliveries() }}</p>
-          </div>
+        <div class="bg-white rounded-lg shadow-sm hover:shadow-md transition-all p-3 border border-gray-100">
+          <p class="text-xs font-semibold text-red-600 mb-1">Damaged</p>
+          <p class="text-xl font-bold text-red-600">{{ getDamagedDeliveries() }}</p>
         </div>
 
       </div>

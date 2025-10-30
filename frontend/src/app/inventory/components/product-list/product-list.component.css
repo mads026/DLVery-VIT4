@@ -35,3 +35,136 @@
 ::ng-deep .custom-dialog-container .mat-mdc-dialog-surface {
   border-radius: 1rem;
 }
+
+/* Mobile Responsive Styles */
+@media (max-width: 768px) {
+  /* Hide table on mobile */
+  .desktop-table {
+    display: none;
+  }
+
+  /* Show mobile cards */
+  .mobile-cards {
+    display: block;
+  }
+
+  /* Adjust padding for mobile */
+  .mobile-container {
+    padding: 1rem !important;
+  }
+
+  /* Stack buttons vertically on small screens */
+  .mobile-button-stack {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .mobile-button-stack button {
+    width: 100%;
+  }
+
+  /* Adjust search and filter controls */
+  .mobile-controls {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .mobile-controls input,
+  .mobile-controls select {
+    width: 100%;
+  }
+}
+
+@media (min-width: 769px) {
+  /* Hide mobile cards on desktop */
+  .mobile-cards {
+    display: none;
+  }
+
+  /* Show table on desktop */
+  .desktop-table {
+    display: block;
+  }
+}
+
+/* Mobile Product Card Styles */
+.product-card {
+  background: white;
+  border-radius: 0.75rem;
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border: 1px solid #e5e7eb;
+  transition: all 0.2s ease;
+}
+
+.product-card:hover {
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
+}
+
+.product-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: start;
+  margin-bottom: 0.75rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid #f3f4f6;
+}
+
+.product-card-title {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 0.25rem;
+}
+
+.product-card-sku {
+  font-size: 0.75rem;
+  font-family: monospace;
+  font-weight: 600;
+  color: rgb(79, 70, 229);
+}
+
+.product-card-body {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.product-card-field {
+  display: flex;
+  flex-direction: column;
+}
+
+.product-card-label {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #6b7280;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
+  margin-bottom: 0.25rem;
+}
+
+.product-card-value {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #111827;
+}
+
+.product-card-actions {
+  display: flex;
+  gap: 0.5rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid #f3f4f6;
+}
+
+.product-card-actions button {
+  flex: 1;
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  border-radius: 0.5rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}

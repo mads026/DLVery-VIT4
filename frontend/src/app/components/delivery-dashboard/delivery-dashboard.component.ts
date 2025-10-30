@@ -84,10 +84,11 @@ export class DeliveryDashboardComponent implements OnInit {
       this.deliveryAgentService.getPendingDeliveries().toPromise(),
       this.deliveryAgentService.getDeliveredDeliveries().toPromise()
     ]).then(([todaysData, pendingData, deliveredData]) => {
-      const allActiveDeliveries = [
+      // Combine and deduplicate deliveries by ID
+      const allActiveDeliveries = this.deduplicateDeliveries([
         ...(todaysData || []),
         ...(pendingData || [])
-      ];
+      ]);
 
       this.categorizeDeliveries(allActiveDeliveries);
       this.deliveredDeliveries = deliveredData || [];
@@ -96,6 +97,16 @@ export class DeliveryDashboardComponent implements OnInit {
       console.error('Error loading deliveries:', error);
       this.loading = false;
     });
+  }
+
+  private deduplicateDeliveries(deliveries: DeliveryAgentDto[]): DeliveryAgentDto[] {
+    const uniqueMap = new Map<number, DeliveryAgentDto>();
+    deliveries.forEach(delivery => {
+      if (delivery.id && !uniqueMap.has(delivery.id)) {
+        uniqueMap.set(delivery.id, delivery);
+      }
+    });
+    return Array.from(uniqueMap.values());
   }
 
   private categorizeDeliveries(deliveries: DeliveryAgentDto[]): void {
@@ -143,7 +154,9 @@ export class DeliveryDashboardComponent implements OnInit {
   }
 
   onViewDetails(delivery: DeliveryAgentDto): void {
-    if (delivery.status === 'DELIVERED') {
+    // Show details for all completed deliveries (delivered, returned, damaged, door locked)
+    const completedStatuses = ['DELIVERED', 'RETURNED', 'DAMAGED_IN_TRANSIT', 'DOOR_LOCKED'];
+    if (completedStatuses.includes(delivery.status)) {
       const detailsDialog = this.dialog.open(DeliveryCompletionDialogComponent, {
         width: '500px',
         data: { delivery: delivery }
